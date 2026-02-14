@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_14_190314) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_14_191751) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -26,6 +26,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_14_190314) do
   end
 
   create_table "teams", force: :cascade do |t|
+    t.string "abbreviation"
     t.string "address"
     t.string "coach"
     t.string "color"

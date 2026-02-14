@@ -16,6 +16,11 @@
   </div>
 
   <div class="field">
+    <%= f.label :abbreviation %>
+    <%= f.text_field :abbreviation, maxlength: 5 %>
+  </div>
+
+  <div class="field">
     <%= f.label :coach, "Coach Name(s)" %>
     <%= f.text_field :coach %>
   </div>

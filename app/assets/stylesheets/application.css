@@ -171,6 +171,11 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   background: #ebf5fb;
 }
 
+/* Non-bookable cells (after 9 PM) */
+.disabled-cell {
+  background: #f0f0f0;
+}
+
 /* Booked cell */
 .booked-cell {
   padding: 4px 6px !important;

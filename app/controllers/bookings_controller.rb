@@ -42,13 +42,13 @@ class BookingsController < ApplicationController
 
   def generate_time_slots
     slots = []
-    # 8:00 AM to 9:00 PM = 53 slots at 15-min intervals
-    (8..20).each do |hour|
+    # 8:00 AM to 10:00 PM = 57 slots at 15-min intervals
+    (8..21).each do |hour|
       [0, 15, 30, 45].each do |min|
         slots << [hour, min]
       end
     end
-    slots << [21, 0] # 9:00 PM is the last slot
+    slots << [22, 0] # 10:00 PM display row
     slots
   end
 end

@@ -3,4 +3,5 @@ class Team < ApplicationRecord
 
   validates :name, presence: true, uniqueness: true
   validates :color, presence: true
+  validates :abbreviation, length: { maximum: 5 }
 end

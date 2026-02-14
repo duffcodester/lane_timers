@@ -36,7 +36,7 @@
                   <td class="booked-cell" rowspan="4"
                       style="background-color: <%= booking.team.color %>20; border-left: 4px solid <%= booking.team.color %>">
                     <div class="booking-content">
-                      <span class="team-name"><%= booking.team.name %></span>
+                      <span class="team-name"><%= booking.team.abbreviation.presence || booking.team.name %></span>
                       <span class="booking-time"><%= format_time(booking.start_time.hour, booking.start_time.min) %> - <%= format_time(booking.end_time.hour, booking.end_time.min) %></span>
                       <%= button_to "×", booking_path(booking), method: :delete,
                           class: "btn-remove", data: { turbo_confirm: "Remove this booking?" } %>
@@ -46,10 +46,14 @@
                   # Skip cells covered by rowspan — do nothing
                 %>
               <% else %>
-                <td class="empty-cell"
-                    data-lane="<%= lane %>" data-hour="<%= hour %>" data-min="<%= min %>"
-                    onclick="openBookingForm(this)">
-                </td>
+                <% if hour < 21 %>
+                  <td class="empty-cell"
+                      data-lane="<%= lane %>" data-hour="<%= hour %>" data-min="<%= min %>"
+                      onclick="openBookingForm(this)">
+                  </td>
+                <% else %>
+                  <td class="disabled-cell"></td>
+                <% end %>
               <% end %>
             <% end %>
           </tr>
@@ -71,7 +75,7 @@
 
         <div class="field">
           <%= f.label :team_id, "Team" %>
-          <%= f.select :team_id, @teams.map { |t| [t.name, t.id] },
+          <%= f.select :team_id, @teams.map { |t| [t.abbreviation.presence || t.name, t.id] },
               { prompt: "Select a team..." }, { name: "booking[team_id]", required: true } %>
         </div>
 
