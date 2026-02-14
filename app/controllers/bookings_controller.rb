@@ -34,6 +34,12 @@ class BookingsController < ApplicationController
     redirect_to root_path(date: date), notice: "Booking removed."
   end
 
+  def clear
+    date = params[:date] ? Date.parse(params[:date]) : Date.new(2026, 3, 27)
+    count = Booking.where(date: date).delete_all
+    redirect_to root_path(date: date), notice: "#{count} booking(s) cleared for #{date.strftime('%B %d, %Y')}."
+  end
+
   private
 
   def booking_params
