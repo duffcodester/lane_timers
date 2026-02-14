@@ -1,6 +1,6 @@
 class BookingsController < ApplicationController
   def index
-    @date = params[:date] ? Date.parse(params[:date]) : Date.today
+    @date = params[:date] ? Date.parse(params[:date]) : Date.new(2026, 3, 27)
     @teams = Team.order(:name)
     @bookings = Booking.where(date: @date).includes(:team)
 
@@ -14,7 +14,7 @@ class BookingsController < ApplicationController
     end
 
     @time_slots = generate_time_slots
-    @lanes = (1..10).to_a
+    @lanes = (1..10).to_a.reverse
   end
 
   def create
