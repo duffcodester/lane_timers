@@ -7,7 +7,7 @@ A lane booking application built with Rails 8. Teams can reserve lanes in 1-hour
 - **10 lanes** available for booking
 - **15-minute interval scheduling** from 8:00 AM to 10:00 PM (last booking starts at 9:00 PM)
 - **1-hour bookings** that can start at any 15-minute mark (e.g., 12:15 PM - 1:15 PM)
-- **Up to 10 teams**, each with a custom name and color
+- **Unlimited teams**, each with a custom name and color
 - **Visual scheduling grid** — click any empty slot to book, click a booking to remove it
 - **Overlap prevention** — the system ensures no two bookings conflict on the same lane
 - **Team admin** — full CRUD interface for managing teams at `/teams`
