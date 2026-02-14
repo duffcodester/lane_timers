@@ -1,0 +1,26 @@
+<h1>Teams (<%= @teams.count %>/10)</h1>
+
+<%= link_to "New Team", new_team_path, class: "btn btn-primary" %>
+
+<table class="teams-table">
+  <thead>
+    <tr>
+      <th>Color</th>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @teams.each do |team| %>
+      <tr>
+        <td><span class="color-swatch" style="background-color: <%= team.color %>"></span></td>
+        <td><%= team.name %></td>
+        <td>
+          <%= link_to "Edit", edit_team_path(team), class: "btn btn-small" %>
+          <%= button_to "Delete", team_path(team), method: :delete, class: "btn btn-small btn-danger",
+              data: { turbo_confirm: "Delete #{team.name}?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

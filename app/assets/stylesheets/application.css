@@ -1,0 +1,325 @@
+/* Lane Timers - Application Styles */
+
+:root {
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --text: #2c3e50;
+  --text-light: #7f8c8d;
+  --border: #dce1e8;
+  --primary: #3498db;
+  --primary-dark: #2980b9;
+  --danger: #e74c3c;
+  --success: #27ae60;
+  --warning: #f39c12;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* Navigation */
+.top-nav {
+  background: var(--text);
+  color: white;
+  padding: 0.75rem 1.5rem;
+}
+.nav-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.app-title { font-size: 1.25rem; }
+.nav-links a {
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  margin-left: 1.5rem;
+  font-weight: 500;
+}
+.nav-links a:hover { color: white; }
+
+/* Container */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Flash messages */
+.flash {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+.flash-notice { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.flash-alert { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.875rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn:hover { background: var(--bg); }
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-danger {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+}
+.btn-danger:hover { background: #c0392b; }
+.btn-small { padding: 0.25rem 0.5rem; font-size: 0.8rem; }
+
+/* Headings */
+h1 { margin-bottom: 1rem; font-size: 1.5rem; }
+
+/* Date picker */
+.date-picker {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.date-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.date-form input[type="date"] {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.date-nav { display: flex; gap: 0.25rem; }
+
+/* Schedule Grid */
+.grid-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.schedule-grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.schedule-grid th {
+  background: var(--text);
+  color: white;
+  padding: 0.5rem 0.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  font-weight: 600;
+  text-align: center;
+}
+.time-col { width: 70px; min-width: 70px; }
+.lane-col { min-width: 90px; }
+
+.schedule-grid td {
+  border: 1px solid var(--border);
+  padding: 0;
+  height: 24px;
+  text-align: center;
+  vertical-align: middle;
+}
+.time-cell {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  padding: 2px 6px !important;
+  background: #fafbfc;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.hour-row .time-cell {
+  font-weight: 700;
+  color: var(--text);
+  border-top: 2px solid var(--border);
+}
+.hour-row td { border-top: 2px solid var(--border); }
+
+/* Empty (bookable) cell */
+.empty-cell {
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.empty-cell:hover {
+  background: #ebf5fb;
+}
+
+/* Booked cell */
+.booked-cell {
+  padding: 4px 6px !important;
+  vertical-align: top;
+  position: relative;
+  height: auto;
+}
+.booking-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 2px;
+}
+.team-name {
+  font-weight: 700;
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.booking-time {
+  font-size: 0.7rem;
+  color: var(--text-light);
+}
+.btn-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+  opacity: 0.5;
+}
+.btn-remove:hover { opacity: 1; background: rgba(231,76,60,0.1); }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-light);
+  font-size: 1.1rem;
+}
+.empty-state a { color: var(--primary); }
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: var(--surface);
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  min-width: 300px;
+  max-width: 400px;
+}
+.modal-content h3 { margin-bottom: 1rem; }
+
+/* Forms */
+.field {
+  margin-bottom: 1rem;
+}
+.field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+}
+.field input, .field select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+.field input[type="color"] {
+  height: 40px;
+  padding: 4px;
+  cursor: pointer;
+}
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Errors */
+.errors {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+.errors h3 { font-size: 0.875rem; margin-bottom: 0.5rem; }
+.errors ul { margin-left: 1.25rem; }
+
+/* Teams table */
+.teams-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-top: 1rem;
+}
+.teams-table th, .teams-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.teams-table th {
+  background: #fafbfc;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+.teams-table td { font-size: 0.9rem; }
+.teams-table tr:hover td { background: #fafbfc; }
+
+.color-swatch {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  vertical-align: middle;
+  border: 1px solid var(--border);
+}
+
+/* Team form */
+.team-form {
+  max-width: 400px;
+  background: var(--surface);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}

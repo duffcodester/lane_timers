@@ -1,0 +1,122 @@
+<h1>Lane Schedule</h1>
+
+<div class="date-picker">
+  <%= form_tag root_path, method: :get, class: "date-form" do %>
+    <%= label_tag :date, "Date:" %>
+    <%= date_field_tag :date, @date, onchange: "this.form.submit()" %>
+  <% end %>
+
+  <div class="date-nav">
+    <%= link_to "< Prev", root_path(date: @date - 1.day), class: "btn btn-small" %>
+    <%= link_to "Today", root_path, class: "btn btn-small" %>
+    <%= link_to "Next >", root_path(date: @date + 1.day), class: "btn btn-small" %>
+  </div>
+</div>
+
+<% if @teams.empty? %>
+  <p class="empty-state">No teams created yet. <%= link_to "Create teams", teams_path %> first.</p>
+<% else %>
+  <div class="grid-wrapper">
+    <table class="schedule-grid">
+      <thead>
+        <tr>
+          <th class="time-col">Time</th>
+          <% @lanes.each do |lane| %>
+            <th class="lane-col">Lane <%= lane %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @time_slots.each do |hour, min| %>
+          <tr class="<%= min == 0 ? 'hour-row' : '' %>">
+            <td class="time-cell"><%= format_time(hour, min) %></td>
+            <% @lanes.each do |lane| %>
+              <% booking = @grid[[lane, hour, min]] %>
+              <% if booking %>
+                <% if booking.start_time.hour == hour && booking.start_time.min == min %>
+                  <td class="booked-cell" rowspan="4"
+                      style="background-color: <%= booking.team.color %>20; border-left: 4px solid <%= booking.team.color %>">
+                    <div class="booking-content">
+                      <span class="team-name"><%= booking.team.name %></span>
+                      <span class="booking-time"><%= format_time(booking.start_time.hour, booking.start_time.min) %> - <%= format_time(booking.end_time.hour, booking.end_time.min) %></span>
+                      <%= button_to "×", booking_path(booking), method: :delete,
+                          class: "btn-remove", data: { turbo_confirm: "Remove this booking?" } %>
+                    </div>
+                  </td>
+                <% end
+                  # Skip cells covered by rowspan — do nothing
+                %>
+              <% else %>
+                <td class="empty-cell"
+                    data-lane="<%= lane %>" data-hour="<%= hour %>" data-min="<%= min %>"
+                    onclick="openBookingForm(this)">
+                </td>
+              <% end %>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Booking modal -->
+  <div id="booking-modal" class="modal" style="display:none">
+    <div class="modal-content">
+      <h3>Book Lane</h3>
+      <%= form_with url: bookings_path, method: :post, id: "booking-form" do |f| %>
+        <input type="hidden" name="booking[lane]" id="booking-lane">
+        <input type="hidden" name="booking[date]" value="<%= @date %>">
+        <input type="hidden" name="booking[start_time]" id="booking-start-time">
+
+        <p id="booking-info"></p>
+
+        <div class="field">
+          <%= f.label :team_id, "Team" %>
+          <%= f.select :team_id, @teams.map { |t| [t.name, t.id] },
+              { prompt: "Select a team..." }, { name: "booking[team_id]", required: true } %>
+        </div>
+
+        <div class="actions">
+          <%= f.submit "Book", class: "btn btn-primary" %>
+          <button type="button" class="btn" onclick="closeBookingForm()">Cancel</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<script>
+  function openBookingForm(cell) {
+    var lane = cell.dataset.lane;
+    var hour = cell.dataset.hour;
+    var min = cell.dataset.min;
+
+    document.getElementById("booking-lane").value = lane;
+    document.getElementById("booking-start-time").value =
+      hour.padStart(2, '0') + ":" + min.padStart(2, '0');
+    document.getElementById("booking-info").textContent =
+      "Lane " + lane + " at " + formatTime(parseInt(hour), parseInt(min));
+    document.getElementById("booking-modal").style.display = "flex";
+  }
+
+  function closeBookingForm() {
+    document.getElementById("booking-modal").style.display = "none";
+  }
+
+  function formatTime(hour, min) {
+    var ampm = hour >= 12 ? "PM" : "AM";
+    var h = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+    var m = min.toString().padStart(2, '0');
+    return h + ":" + m + " " + ampm;
+  }
+
+  // Close modal on escape
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") closeBookingForm();
+  });
+
+  // Close modal on background click
+  document.getElementById("booking-modal")?.addEventListener("click", function(e) {
+    if (e.target === this) closeBookingForm();
+  });
+</script>
