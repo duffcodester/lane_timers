@@ -3,6 +3,14 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["form", "bookingId", "lane", "startTime"]
 
+  connect() {
+    const scrollY = sessionStorage.getItem("dragScrollY")
+    if (scrollY !== null) {
+      sessionStorage.removeItem("dragScrollY")
+      window.scrollTo(0, parseInt(scrollY, 10))
+    }
+  }
+
   dragstart(event) {
     const cell = event.target.closest(".booked-cell")
     if (!cell) return
@@ -46,6 +54,7 @@ export default class extends Controller {
     this.bookingIdTarget.value = bookingId
     this.laneTarget.value = lane
     this.startTimeTarget.value = `${hour}:${min}`
+    sessionStorage.setItem("dragScrollY", window.scrollY.toString())
     this.formTarget.requestSubmit()
   }
 
