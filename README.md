@@ -1,24 +1,34 @@
-# README
+# Lane Timers
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A lane booking application built with Rails 8. Teams can reserve lanes in 1-hour time slots across a visual scheduling grid.
 
-Things you may want to cover:
+## Features
 
-* Ruby version
+- **12 lanes** available for booking
+- **15-minute interval scheduling** from 8:00 AM to 10:00 PM (last booking starts at 9:00 PM)
+- **1-hour bookings** that can start at any 15-minute mark (e.g., 12:15 PM - 1:15 PM)
+- **Up to 10 teams**, each with a custom name and color
+- **Visual scheduling grid** — click any empty slot to book, click a booking to remove it
+- **Overlap prevention** — the system ensures no two bookings conflict on the same lane
+- **Team admin** — full CRUD interface for managing teams at `/teams`
+- **Date navigation** — browse schedules by date with prev/next buttons and a date picker
 
-* System dependencies
+## Tech Stack
 
-* Configuration
+- Ruby 3.3.5
+- Rails 8.1
+- SQLite3
+- Importmap (no Node.js required)
+- Turbo/Stimulus
 
-* Database creation
+## Setup
 
-* Database initialization
+```bash
+rbenv install 3.3.5
+rbenv local 3.3.5
+bundle install
+rails db:migrate
+rails server
+```
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Visit `http://localhost:3000/teams` to create teams, then `http://localhost:3000` to start booking lanes.
