@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_14_180614) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_14_190314) do
   create_table "bookings", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date", null: false
@@ -23,9 +23,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_14_180614) do
   end
 
   create_table "teams", force: :cascade do |t|
+    t.string "address"
+    t.string "coach"
     t.string "color"
     t.datetime "created_at", null: false
+    t.string "email"
     t.string "name", null: false
+    t.string "phone"
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_teams_on_name", unique: true
   end

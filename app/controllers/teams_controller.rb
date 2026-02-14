@@ -2,7 +2,10 @@ class TeamsController < ApplicationController
   before_action :set_team, only: [:show, :edit, :update, :destroy]
 
   def index
-    @teams = Team.order(:name)
+    @teams = Team.left_joins(:bookings)
+                 .select("teams.*, COUNT(bookings.id) AS bookings_count")
+                 .group("teams.id")
+                 .order(:name)
   end
 
   def new
@@ -45,6 +48,6 @@ class TeamsController < ApplicationController
   end
 
   def team_params
-    params.require(:team).permit(:name, :color)
+    params.require(:team).permit(:name, :color, :coach, :address, :phone, :email)
   end
 end

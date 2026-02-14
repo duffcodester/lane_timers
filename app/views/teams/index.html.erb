@@ -1,4 +1,4 @@
-<h1>Teams (<%= @teams.count %>)</h1>
+<h1>Teams (<%= @teams.length %>)</h1>
 
 <%= link_to "New Team", new_team_path, class: "btn btn-primary" %>
 
@@ -7,6 +7,11 @@
     <tr>
       <th>Color</th>
       <th>Name</th>
+      <th>Coach Name(s)</th>
+      <th>Address</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <th>Hours</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -15,7 +20,12 @@
       <tr>
         <td><span class="color-swatch" style="background-color: <%= team.color %>"></span></td>
         <td><%= team.name %></td>
-        <td>
+        <td><%= team.coach %></td>
+        <td><%= team.address %></td>
+        <td><%= team.phone %></td>
+        <td><%= team.email %></td>
+        <td><%= "%.2f" % (team.bookings_count.to_f) %></td>
+        <td class="actions-cell">
           <%= link_to "Edit", edit_team_path(team), class: "btn btn-small" %>
           <%= button_to "Delete", team_path(team), method: :delete, class: "btn btn-small btn-danger",
               data: { turbo_confirm: "Delete #{team.name}?" } %>

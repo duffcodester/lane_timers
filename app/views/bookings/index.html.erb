@@ -8,7 +8,6 @@
 
   <div class="date-nav">
     <%= link_to "< Prev", root_path(date: @date - 1.day), class: "btn btn-small" %>
-    <%= link_to "Today", root_path, class: "btn btn-small" %>
     <%= link_to "Next >", root_path(date: @date + 1.day), class: "btn btn-small" %>
   </div>
 </div>

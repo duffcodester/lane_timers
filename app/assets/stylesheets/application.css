@@ -306,6 +306,9 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
 .teams-table td { font-size: 0.9rem; }
 .teams-table tr:hover td { background: #fafbfc; }
 
+.actions-cell { white-space: nowrap; }
+.actions-cell form { display: inline-block; }
+
 .color-swatch {
   display: inline-block;
   width: 20px;

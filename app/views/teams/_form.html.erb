@@ -16,6 +16,26 @@
   </div>
 
   <div class="field">
+    <%= f.label :coach, "Coach Name(s)" %>
+    <%= f.text_field :coach %>
+  </div>
+
+  <div class="field">
+    <%= f.label :address %>
+    <%= f.text_field :address %>
+  </div>
+
+  <div class="field">
+    <%= f.label :phone %>
+    <%= f.phone_field :phone %>
+  </div>
+
+  <div class="field">
+    <%= f.label :email %>
+    <%= f.email_field :email %>
+  </div>
+
+  <div class="field">
     <%= f.label :color %>
     <%= f.color_field :color, value: team.color || "#3498db" %>
   </div>
