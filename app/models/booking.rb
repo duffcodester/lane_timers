@@ -1,7 +1,7 @@
 class Booking < ApplicationRecord
   belongs_to :team
 
-  validates :lane, presence: true, inclusion: { in: 1..12, message: "must be between 1 and 12" }
+  validates :lane, presence: true, inclusion: { in: 1..10, message: "must be between 1 and 10" }
   validates :date, presence: true
   validates :start_time, presence: true
   validate :start_time_on_15_minute_boundary

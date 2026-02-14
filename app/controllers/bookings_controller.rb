@@ -14,7 +14,7 @@ class BookingsController < ApplicationController
     end
 
     @time_slots = generate_time_slots
-    @lanes = (1..12).to_a
+    @lanes = (1..10).to_a
   end
 
   def create
