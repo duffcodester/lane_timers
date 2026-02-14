@@ -16,3 +16,73 @@ teams.each do |attrs|
 end
 
 puts "Seeded #{Team.count} teams."
+
+# Sample bookings across March 27-29, 2026
+all_teams = Team.all.to_a
+dates = [Date.new(2026, 3, 27), Date.new(2026, 3, 28), Date.new(2026, 3, 29)]
+
+# Bookings from 10:00 AM to 5:00 PM (last booking at 4:00 PM, ends at 5:00 PM)
+# Non-overlapping: place bookings at 1-hour intervals
+bookings_data = [
+  # March 27
+  { date: dates[0], lane: 10, start: "10:00", team_idx: 0 },
+  { date: dates[0], lane: 9,  start: "10:00", team_idx: 1 },
+  { date: dates[0], lane: 8,  start: "11:00", team_idx: 2 },
+  { date: dates[0], lane: 7,  start: "11:00", team_idx: 3 },
+  { date: dates[0], lane: 6,  start: "12:00", team_idx: 4 },
+  { date: dates[0], lane: 5,  start: "12:00", team_idx: 5 },
+  { date: dates[0], lane: 4,  start: "13:00", team_idx: 6 },
+  { date: dates[0], lane: 3,  start: "13:00", team_idx: 7 },
+  { date: dates[0], lane: 10, start: "14:00", team_idx: 0 },
+  { date: dates[0], lane: 9,  start: "14:00", team_idx: 1 },
+  { date: dates[0], lane: 8,  start: "15:00", team_idx: 2 },
+  { date: dates[0], lane: 7,  start: "15:00", team_idx: 3 },
+  { date: dates[0], lane: 6,  start: "16:00", team_idx: 4 },
+  { date: dates[0], lane: 5,  start: "16:00", team_idx: 5 },
+
+  # March 28
+  { date: dates[1], lane: 10, start: "10:00", team_idx: 2 },
+  { date: dates[1], lane: 9,  start: "10:00", team_idx: 3 },
+  { date: dates[1], lane: 8,  start: "10:30", team_idx: 4 },
+  { date: dates[1], lane: 7,  start: "11:00", team_idx: 5 },
+  { date: dates[1], lane: 6,  start: "11:15", team_idx: 6 },
+  { date: dates[1], lane: 5,  start: "12:00", team_idx: 7 },
+  { date: dates[1], lane: 4,  start: "12:15", team_idx: 0 },
+  { date: dates[1], lane: 3,  start: "13:00", team_idx: 1 },
+  { date: dates[1], lane: 10, start: "14:00", team_idx: 4 },
+  { date: dates[1], lane: 9,  start: "14:30", team_idx: 5 },
+  { date: dates[1], lane: 8,  start: "15:00", team_idx: 6 },
+  { date: dates[1], lane: 7,  start: "15:15", team_idx: 7 },
+  { date: dates[1], lane: 6,  start: "16:00", team_idx: 0 },
+  { date: dates[1], lane: 5,  start: "16:00", team_idx: 1 },
+
+  # March 29
+  { date: dates[2], lane: 10, start: "10:00", team_idx: 6 },
+  { date: dates[2], lane: 9,  start: "10:15", team_idx: 7 },
+  { date: dates[2], lane: 8,  start: "11:00", team_idx: 0 },
+  { date: dates[2], lane: 7,  start: "11:30", team_idx: 1 },
+  { date: dates[2], lane: 6,  start: "12:00", team_idx: 2 },
+  { date: dates[2], lane: 5,  start: "12:00", team_idx: 3 },
+  { date: dates[2], lane: 4,  start: "13:00", team_idx: 4 },
+  { date: dates[2], lane: 3,  start: "13:00", team_idx: 5 },
+  { date: dates[2], lane: 10, start: "14:00", team_idx: 6 },
+  { date: dates[2], lane: 9,  start: "14:00", team_idx: 7 },
+  { date: dates[2], lane: 8,  start: "15:00", team_idx: 0 },
+  { date: dates[2], lane: 7,  start: "15:30", team_idx: 1 },
+  { date: dates[2], lane: 6,  start: "16:00", team_idx: 2 },
+  { date: dates[2], lane: 5,  start: "16:00", team_idx: 3 },
+]
+
+Booking.destroy_all
+
+bookings_data.each do |b|
+  hour, min = b[:start].split(":").map(&:to_i)
+  Booking.create!(
+    date: b[:date],
+    lane: b[:lane],
+    start_time: Time.utc(2000, 1, 1, hour, min),
+    team: all_teams[b[:team_idx]]
+  )
+end
+
+puts "Seeded #{Booking.count} bookings."
