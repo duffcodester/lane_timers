@@ -46,6 +46,10 @@ export default class extends Controller {
     this.bookingIdTarget.value = bookingId
     this.laneTarget.value = lane
     this.startTimeTarget.value = `${hour}:${min}`
+    const scrollY = window.scrollY
+    document.addEventListener("turbo:load", () => {
+      window.scrollTo(0, scrollY)
+    }, { once: true })
     this.formTarget.requestSubmit()
   }
 
