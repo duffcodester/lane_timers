@@ -5,7 +5,7 @@ class TeamsController < ApplicationController
     @teams = Team.left_joins(:bookings)
                  .select("teams.*, COUNT(bookings.id) AS bookings_count")
                  .group("teams.id")
-                 .order(:name)
+                 .order("teams.name ASC")
   end
 
   def new
