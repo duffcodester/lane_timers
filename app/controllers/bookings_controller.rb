@@ -27,6 +27,24 @@ class BookingsController < ApplicationController
     end
   end
 
+  def update
+    @booking = Booking.find(params[:id])
+    date = @booking.date
+
+    new_lane = params[:booking][:lane].to_i
+    new_start_time = Time.zone.parse("#{date} #{params[:booking][:start_time]}")
+
+    @booking.lane = new_lane
+    @booking.start_time = new_start_time
+
+    if @booking.save
+      redirect_to root_path(date: date), notice: "Booking moved successfully."
+    else
+      redirect_to root_path(date: date),
+        alert: @booking.errors.full_messages.join(", ")
+    end
+  end
+
   def destroy
     @booking = Booking.find(params[:id])
     date = @booking.date

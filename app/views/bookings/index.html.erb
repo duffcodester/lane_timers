@@ -20,7 +20,7 @@
 <% if @teams.empty? %>
   <p class="empty-state">No teams created yet. <%= link_to "Create teams", teams_path %> first.</p>
 <% else %>
-  <div class="grid-wrapper">
+  <div class="grid-wrapper" data-controller="drag">
     <table class="schedule-grid">
       <thead>
         <tr>
@@ -39,6 +39,9 @@
               <% if booking %>
                 <% if booking.start_time.hour == hour && booking.start_time.min == min %>
                   <td class="booked-cell" rowspan="4"
+                      draggable="true"
+                      data-booking-id="<%= booking.id %>"
+                      data-action="dragstart->drag#dragstart dragend->drag#dragend"
                       style="background-color: <%= booking.team.color %>20; border-left: 4px solid <%= booking.team.color %>">
                     <div class="booking-content">
                       <span class="team-name"><%= booking.team.abbreviation.presence || booking.team.name %></span>
@@ -54,6 +57,7 @@
                 <% if hour < 21 %>
                   <td class="empty-cell"
                       data-lane="<%= lane %>" data-hour="<%= hour %>" data-min="<%= min %>"
+                      data-action="dragover->drag#dragover dragenter->drag#dragenter dragleave->drag#dragleave drop->drag#drop"
                       onclick="openBookingForm(this)">
                   </td>
                 <% else %>
@@ -65,6 +69,16 @@
         <% end %>
       </tbody>
     </table>
+
+    <!-- Hidden form for drag-and-drop updates -->
+    <form method="post" action="<%= bookings_path %>/0" style="display:none"
+          data-drag-target="form">
+      <input type="hidden" name="_method" value="patch">
+      <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+      <input type="hidden" name="booking[id]" data-drag-target="bookingId">
+      <input type="hidden" name="booking[lane]" data-drag-target="lane">
+      <input type="hidden" name="booking[start_time]" data-drag-target="startTime">
+    </form>
   </div>
 
   <!-- Booking modal -->
