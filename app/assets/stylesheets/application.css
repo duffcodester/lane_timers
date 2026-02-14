@@ -125,6 +125,7 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   width: 100%;
   border-collapse: collapse;
   font-size: 0.8rem;
+  table-layout: fixed;
 }
 .schedule-grid th {
   background: var(--text);
