@@ -41,6 +41,11 @@
   </div>
 
   <div class="field">
+    <%= f.label :misc_expense, "Misc Expense ($)" %>
+    <%= f.number_field :misc_expense, step: 0.01, min: 0, value: team.misc_expense || 0 %>
+  </div>
+
+  <div class="field">
     <%= f.label :color %>
     <%= f.color_field :color, value: team.color || "#3498db" %>
   </div>

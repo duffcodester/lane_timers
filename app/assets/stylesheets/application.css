@@ -160,6 +160,17 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   color: var(--text);
   border-top: 2px solid var(--border);
 }
+.session-col { width: 80px; min-width: 80px; }
+.session-cell {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--primary);
+  padding: 4px 6px !important;
+  background: #fafbfc;
+  vertical-align: middle;
+  text-align: center;
+  letter-spacing: 0.03em;
+}
 .hour-row td { border-top: 2px solid var(--border); }
 
 /* Empty (bookable) cell */

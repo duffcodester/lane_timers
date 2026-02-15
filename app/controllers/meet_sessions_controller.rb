@@ -1,5 +1,5 @@
 class MeetSessionsController < ApplicationController
-  before_action :set_meet_session, only: [:edit, :update, :destroy]
+  before_action :set_meet_session, only: [:edit, :update, :destroy, :duplicate]
 
   def index
     @meet_sessions = MeetSession.order(:date, :start_time)
@@ -26,6 +26,17 @@ class MeetSessionsController < ApplicationController
       redirect_to meet_sessions_path, notice: "Session updated successfully."
     else
       render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def duplicate
+    new_session = @meet_session.dup
+    new_session.start_time = @meet_session.start_time + 1.hour
+    new_session.end_time = @meet_session.end_time + 1.hour
+    if new_session.save
+      redirect_to meet_sessions_path, notice: "Session duplicated successfully."
+    else
+      redirect_to meet_sessions_path, alert: new_session.errors.full_messages.join(", ")
     end
   end
 

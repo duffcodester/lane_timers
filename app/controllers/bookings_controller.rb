@@ -20,6 +20,21 @@ class BookingsController < ApplicationController
       # Merge time slots from all sessions, deduplicate and sort
       @time_slots = @sessions.flat_map(&:time_slots).uniq.sort
       @lanes = (0..11).to_a.reverse
+
+      # Map session start times to session info for the session column
+      @session_starts = {}
+      @sessions.each do |s|
+        key = [s.start_time.hour, s.start_time.min]
+        @session_starts[key] = { name: s.name, slots: s.time_slots.size }
+      end
+
+      # Track which slots are covered by a session rowspan (to skip rendering td)
+      @session_covered = Set.new
+      @sessions.each do |s|
+        s.time_slots.each_with_index do |(h, m), i|
+          @session_covered.add([h, m]) if i > 0
+        end
+      end
     end
   end
 

@@ -45,6 +45,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_15_013730) do
     t.string "color"
     t.datetime "created_at", null: false
     t.string "email"
+    t.decimal "misc_expense", precision: 10, scale: 2, default: "0.0"
     t.string "name", null: false
     t.string "phone"
     t.datetime "updated_at", null: false

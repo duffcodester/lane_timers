@@ -8,8 +8,15 @@ class Booking < ApplicationRecord
   validate :times_on_15_minute_boundary
   validate :end_time_after_start_time
   validate :minimum_duration
-  validate :times_within_session
+  validates :phone, format: { with: /\A\d{10}\z/, message: "must be a 10-digit number" }, allow_blank: true
   validate :no_overlapping_bookings
+
+  before_validation :normalize_phone
+
+  def formatted_phone
+    return nil unless phone.present?
+    "(#{phone[0..2]})-#{phone[3..5]}-#{phone[6..9]}"
+  end
 
   def duration_slots
     return 0 unless start_time && end_time
@@ -17,6 +24,10 @@ class Booking < ApplicationRecord
   end
 
   private
+
+  def normalize_phone
+    self.phone = phone.gsub(/\D/, "") if phone.present?
+  end
 
   def times_on_15_minute_boundary
     if start_time && start_time.min % 15 != 0
@@ -38,25 +49,6 @@ class Booking < ApplicationRecord
     return unless start_time && end_time && end_time > start_time
     if (end_time - start_time) < 15.minutes
       errors.add(:end_time, "booking must be at least 15 minutes")
-    end
-  end
-
-  def times_within_session
-    return unless date && start_time && end_time
-    sessions = MeetSession.where(date: date)
-    if sessions.empty?
-      errors.add(:date, "has no session configured")
-      return
-    end
-    booking_start = start_time.change(year: 2000, month: 1, day: 1)
-    booking_end = end_time.change(year: 2000, month: 1, day: 1)
-    within_any = sessions.any? do |session|
-      session_start = session.start_time.change(year: 2000, month: 1, day: 1)
-      session_end = session.end_time.change(year: 2000, month: 1, day: 1)
-      booking_start >= session_start && booking_end <= session_end
-    end
-    unless within_any
-      errors.add(:base, "booking must be within a session window")
     end
   end
 

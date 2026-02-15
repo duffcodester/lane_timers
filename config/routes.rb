@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
-  resources :teams
-  resources :meet_sessions
+  resources :teams do
+    get :export, on: :collection
+  end
+  resources :meet_sessions do
+    post :duplicate, on: :member
+  end
   delete "bookings/clear", to: "bookings#clear", as: :clear_bookings
   resources :bookings, only: [:create, :destroy, :update]
 

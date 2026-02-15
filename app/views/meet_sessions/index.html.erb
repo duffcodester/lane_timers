@@ -21,6 +21,7 @@
         <td><%= session.end_time.strftime("%l:%M %p").strip %></td>
         <td class="actions-cell">
           <%= link_to "Edit", edit_meet_session_path(session), class: "btn btn-small" %>
+          <%= button_to "Duplicate", duplicate_meet_session_path(session), method: :post, class: "btn btn-small" %>
           <%= button_to "Delete", meet_session_path(session), method: :delete, class: "btn btn-small btn-danger",
               data: { turbo_confirm: "Delete session for #{session.date.strftime('%B %d, %Y')}?" } %>
         </td>
