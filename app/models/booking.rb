@@ -2,48 +2,71 @@ class Booking < ApplicationRecord
   belongs_to :team
 
   validates :lane, presence: true, inclusion: { in: 0..11, message: "must be between 0 and 11" }
-  validates :date, presence: true, inclusion: { in: Date.new(2026, 3, 27)..Date.new(2026, 3, 29), message: "must be between March 27-29, 2026" }
+  validates :date, presence: true
   validates :start_time, presence: true
-  validate :start_time_on_15_minute_boundary
-  validate :start_time_within_range
+  validates :end_time, presence: true
+  validate :times_on_15_minute_boundary
+  validate :end_time_after_start_time
+  validate :minimum_duration
+  validate :times_within_session
   validate :no_overlapping_bookings
 
-  DURATION_MINUTES = 60
-
-  def end_time
-    start_time + DURATION_MINUTES.minutes if start_time
+  def duration_slots
+    return 0 unless start_time && end_time
+    ((end_time - start_time) / 15.minutes).to_i
   end
 
   private
 
-  def start_time_on_15_minute_boundary
-    return unless start_time
-    unless start_time.min % 15 == 0
-      errors.add(:start_time, "must be on a 15-minute boundary (XX:00, XX:15, XX:30, XX:45)")
+  def times_on_15_minute_boundary
+    if start_time && start_time.min % 15 != 0
+      errors.add(:start_time, "must be on a 15-minute boundary")
+    end
+    if end_time && end_time.min % 15 != 0
+      errors.add(:end_time, "must be on a 15-minute boundary")
     end
   end
 
-  def start_time_within_range
-    return unless start_time
-    hour = start_time.hour
-    min = start_time.min
-    if hour < 8 || hour > 19 || (hour == 19 && min > 0)
-      errors.add(:start_time, "must be between 8:00 AM and 7:00 PM")
+  def end_time_after_start_time
+    return unless start_time && end_time
+    if end_time <= start_time
+      errors.add(:end_time, "must be after start time")
+    end
+  end
+
+  def minimum_duration
+    return unless start_time && end_time && end_time > start_time
+    if (end_time - start_time) < 15.minutes
+      errors.add(:end_time, "booking must be at least 15 minutes")
+    end
+  end
+
+  def times_within_session
+    return unless date && start_time && end_time
+    sessions = MeetSession.where(date: date)
+    if sessions.empty?
+      errors.add(:date, "has no session configured")
+      return
+    end
+    booking_start = start_time.change(year: 2000, month: 1, day: 1)
+    booking_end = end_time.change(year: 2000, month: 1, day: 1)
+    within_any = sessions.any? do |session|
+      session_start = session.start_time.change(year: 2000, month: 1, day: 1)
+      session_end = session.end_time.change(year: 2000, month: 1, day: 1)
+      booking_start >= session_start && booking_end <= session_end
+    end
+    unless within_any
+      errors.add(:base, "booking must be within a session window")
     end
   end
 
   def no_overlapping_bookings
-    return unless lane && date && start_time
+    return unless lane && date && start_time && end_time
 
-    # A booking occupies start_time to start_time + 60 minutes.
-    # Two bookings overlap if their time ranges intersect.
-    # A new booking at time T conflicts with any existing booking whose
-    # start_time is within (T - 45min) to (T + 45min) inclusive.
-    conflicting_start = start_time - 45.minutes
-    conflicting_end = start_time + 45.minutes
-
+    # Two bookings overlap if their time ranges intersect:
+    # existing.start_time < new.end_time AND existing.end_time > new.start_time
     scope = Booking.where(lane: lane, date: date)
-      .where(start_time: conflicting_start..conflicting_end)
+      .where("start_time < ? AND end_time > ?", end_time, start_time)
     scope = scope.where.not(id: id) if persisted?
 
     if scope.exists?

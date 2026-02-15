@@ -1,9 +1,9 @@
-<h1>Lane Schedule</h1>
+<h1>Lane Schedule — <%= @date.strftime("%A, %B %d, %Y") %></h1>
 
 <div class="date-picker">
   <%= form_tag root_path, method: :get, class: "date-form" do %>
     <%= label_tag :date, "Date:" %>
-    <%= date_field_tag :date, @date, onchange: "this.form.submit()", min: "2026-03-27", max: "2026-03-29" %>
+    <%= date_field_tag :date, @date, onchange: "this.form.submit()" %>
   <% end %>
 
   <div class="date-nav">
@@ -17,7 +17,9 @@
       data: { turbo_confirm: "Are you sure you want to delete ALL bookings for #{@date.strftime('%B %d, %Y')}?" } %>
 </div>
 
-<% if @teams.empty? %>
+<% if @sessions.blank? %>
+  <p class="empty-state">No session configured for this date. <%= link_to "Manage sessions", meet_sessions_path %>.</p>
+<% elsif @teams.empty? %>
   <p class="empty-state">No teams created yet. <%= link_to "Create teams", teams_path %> first.</p>
 <% else %>
   <div class="grid-wrapper" data-controller="drag">
@@ -38,13 +40,23 @@
               <% booking = @grid[[lane, hour, min]] %>
               <% if booking %>
                 <% if booking.start_time.hour == hour && booking.start_time.min == min %>
-                  <td class="booked-cell" rowspan="4"
+                  <td class="booked-cell" rowspan="<%= booking.duration_slots %>"
                       draggable="true"
                       data-booking-id="<%= booking.id %>"
+                      data-booking-name="<%= booking.name %>"
+                      data-booking-phone="<%= booking.phone %>"
+                      data-booking-end-time="<%= booking.end_time.strftime('%H:%M') %>"
                       data-action="dragstart->drag#dragstart dragend->drag#dragend"
+                      onclick="openEditForm(this)"
                       style="background-color: <%= booking.team.color %>20; border-left: 4px solid <%= booking.team.color %>">
                     <div class="booking-content">
                       <span class="team-name"><%= booking.team.abbreviation.presence || booking.team.name %></span>
+                      <% if booking.name.present? %>
+                        <span class="booking-name"><%= booking.name %></span>
+                      <% end %>
+                      <% if booking.phone.present? %>
+                        <span class="booking-phone"><%= booking.phone %></span>
+                      <% end %>
                       <%= button_to "×", booking_path(booking), method: :delete,
                           class: "btn-remove", data: { turbo_confirm: "Remove this booking?" } %>
                     </div>
@@ -53,15 +65,11 @@
                   # Skip cells covered by rowspan — do nothing
                 %>
               <% else %>
-                <% if hour < 19 || (hour == 19 && min < 15) %>
-                  <td class="empty-cell"
-                      data-lane="<%= lane %>" data-hour="<%= hour %>" data-min="<%= min %>"
-                      data-action="dragover->drag#dragover dragenter->drag#dragenter dragleave->drag#dragleave drop->drag#drop"
-                      onclick="openBookingForm(this)">
-                  </td>
-                <% else %>
-                  <td class="disabled-cell"></td>
-                <% end %>
+                <td class="empty-cell"
+                    data-lane="<%= lane %>" data-hour="<%= hour %>" data-min="<%= min %>"
+                    data-action="dragover->drag#dragover dragenter->drag#dragenter dragleave->drag#dragleave drop->drag#drop"
+                    onclick="openBookingForm(this)">
+                </td>
               <% end %>
             <% end %>
           </tr>
@@ -88,6 +96,7 @@
         <input type="hidden" name="booking[lane]" id="booking-lane">
         <input type="hidden" name="booking[date]" value="<%= @date %>">
         <input type="hidden" name="booking[start_time]" id="booking-start-time">
+        <input type="hidden" name="booking[end_time]" id="booking-end-time">
 
         <p id="booking-info"></p>
 
@@ -97,6 +106,20 @@
               { prompt: "Select a team..." }, { name: "booking[team_id]", required: true } %>
         </div>
 
+        <div class="field">
+          <label for="booking-duration">Duration</label>
+          <select id="booking-duration" onchange="updateEndTime()">
+            <option value="15">15 min</option>
+            <option value="30">30 min</option>
+            <option value="45">45 min</option>
+            <option value="60" selected>60 min</option>
+            <option value="75">1 hr 15 min</option>
+            <option value="90">1 hr 30 min</option>
+            <option value="105">1 hr 45 min</option>
+            <option value="120">2 hr</option>
+          </select>
+        </div>
+
         <div class="actions">
           <%= f.submit "Book", class: "btn btn-primary" %>
           <button type="button" class="btn" onclick="closeBookingForm()">Cancel</button>
@@ -104,20 +127,66 @@
       <% end %>
     </div>
   </div>
+  <!-- Edit booking modal -->
+  <div id="edit-modal" class="modal" style="display:none">
+    <div class="modal-content">
+      <h3>Edit Booking</h3>
+      <form method="post" id="edit-form" action="">
+        <input type="hidden" name="_method" value="patch">
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+
+        <div class="field">
+          <label for="edit-end-time">End Time</label>
+          <input type="time" name="booking[end_time]" id="edit-end-time" step="900">
+        </div>
+
+        <div class="field">
+          <label for="edit-name">Name</label>
+          <input type="text" name="booking[name]" id="edit-name">
+        </div>
+
+        <div class="field">
+          <label for="edit-phone">Phone</label>
+          <input type="tel" name="booking[phone]" id="edit-phone">
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn" onclick="closeEditForm()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
 <% end %>
 
 <script>
+  var bookingStartHour, bookingStartMin;
+
   function openBookingForm(cell) {
     var lane = cell.dataset.lane;
     var hour = cell.dataset.hour;
     var min = cell.dataset.min;
 
+    bookingStartHour = parseInt(hour);
+    bookingStartMin = parseInt(min);
+
     document.getElementById("booking-lane").value = lane;
     document.getElementById("booking-start-time").value =
       hour.padStart(2, '0') + ":" + min.padStart(2, '0');
+    document.getElementById("booking-duration").value = "60";
+    updateEndTime();
     document.getElementById("booking-info").textContent =
       "Lane " + lane + " at " + formatTime(parseInt(hour), parseInt(min));
     document.getElementById("booking-modal").style.display = "flex";
+  }
+
+  function updateEndTime() {
+    var duration = parseInt(document.getElementById("booking-duration").value);
+    var totalMin = bookingStartHour * 60 + bookingStartMin + duration;
+    var endHour = Math.floor(totalMin / 60);
+    var endMin = totalMin % 60;
+    document.getElementById("booking-end-time").value =
+      endHour.toString().padStart(2, '0') + ":" + endMin.toString().padStart(2, '0');
   }
 
   function closeBookingForm() {
@@ -131,17 +200,47 @@
     return h + ":" + m + " " + ampm;
   }
 
-  // Close modal on escape
+  // Edit modal
+  var isDragging = false;
+
+  document.addEventListener("dragstart", function() { isDragging = true; });
+  document.addEventListener("dragend", function() { setTimeout(function() { isDragging = false; }, 0); });
+
+  function openEditForm(cell) {
+    if (isDragging) return;
+    var bookingId = cell.dataset.bookingId;
+    var name = cell.dataset.bookingName || "";
+    var phone = cell.dataset.bookingPhone || "";
+    var endTime = cell.dataset.bookingEndTime || "";
+
+    document.getElementById("edit-form").action = "/bookings/" + bookingId;
+    document.getElementById("edit-name").value = name;
+    document.getElementById("edit-phone").value = phone;
+    document.getElementById("edit-end-time").value = endTime;
+    document.getElementById("edit-modal").style.display = "flex";
+  }
+
+  function closeEditForm() {
+    document.getElementById("edit-modal").style.display = "none";
+  }
+
+  // Close modals on escape
   document.addEventListener("keydown", function(e) {
-    if (e.key === "Escape") closeBookingForm();
+    if (e.key === "Escape") {
+      closeBookingForm();
+      closeEditForm();
+    }
   });
 
-  // Close modal on background click
+  // Close modals on background click
   document.getElementById("booking-modal")?.addEventListener("click", function(e) {
     if (e.target === this) closeBookingForm();
   });
+  document.getElementById("edit-modal")?.addEventListener("click", function(e) {
+    if (e.target === this) closeEditForm();
+  });
 
-  // Preserve scroll position after booking form submissions
+  // Preserve scroll position after form submissions
   function preserveScroll() {
     var scrollY = window.scrollY;
     document.addEventListener("turbo:load", function() {
@@ -150,6 +249,7 @@
   }
 
   document.getElementById("booking-form")?.addEventListener("turbo:submit-start", preserveScroll);
+  document.getElementById("edit-form")?.addEventListener("turbo:submit-start", preserveScroll);
 
   // Also preserve scroll for delete buttons
   document.querySelectorAll(".btn-remove").forEach(function(btn) {

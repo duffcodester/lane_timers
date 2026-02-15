@@ -1,20 +1,26 @@
 class BookingsController < ApplicationController
   def index
-    @date = params[:date] ? Date.parse(params[:date]) : Date.new(2026, 3, 27)
+    @date = params[:date] ? Date.parse(params[:date]) : (MeetSession.order(:date).first&.date || Date.today)
     @teams = Team.order(:abbreviation)
-    @bookings = Booking.where(date: @date).includes(:team)
+    @sessions = MeetSession.where(date: @date).order(:start_time)
 
-    # Build a lookup: { [lane, hour, minute] => booking }
-    @grid = {}
-    @bookings.each do |booking|
-      4.times do |i|
-        slot_time = booking.start_time + (i * 15).minutes
-        @grid[[booking.lane, slot_time.hour, slot_time.min]] = booking
+    if @sessions.any?
+      @bookings = Booking.where(date: @date).includes(:team)
+
+      # Build a lookup: { [lane, hour, minute] => booking }
+      @grid = {}
+      @bookings.each do |booking|
+        slots = booking.duration_slots
+        slots.times do |i|
+          slot_time = booking.start_time + (i * 15).minutes
+          @grid[[booking.lane, slot_time.hour, slot_time.min]] = booking
+        end
       end
-    end
 
-    @time_slots = generate_time_slots
-    @lanes = (0..11).to_a.reverse
+      # Merge time slots from all sessions, deduplicate and sort
+      @time_slots = @sessions.flat_map(&:time_slots).uniq.sort
+      @lanes = (0..11).to_a.reverse
+    end
   end
 
   def create
@@ -31,14 +37,32 @@ class BookingsController < ApplicationController
     @booking = Booking.find(params[:id])
     date = @booking.date
 
-    new_lane = params[:booking][:lane].to_i
-    new_start_time = Time.zone.parse("#{date} #{params[:booking][:start_time]}")
+    attrs = {}
 
-    @booking.lane = new_lane
-    @booking.start_time = new_start_time
+    bp = booking_params
 
-    if @booking.save
-      redirect_to root_path(date: date), notice: "Booking moved successfully."
+    # Drag-and-drop sends lane + start_time — preserve the booking's duration
+    if bp[:lane].present?
+      attrs[:lane] = bp[:lane].to_i
+    end
+    if bp[:start_time].present?
+      new_start = Time.zone.parse("#{date} #{bp[:start_time]}")
+      duration = @booking.end_time - @booking.start_time
+      attrs[:start_time] = new_start
+      attrs[:end_time] = new_start + duration
+    end
+
+    # Edit modal may send end_time directly
+    if bp[:end_time].present?
+      attrs[:end_time] = Time.zone.parse("#{date} #{bp[:end_time]}")
+    end
+
+    # Edit modal sends name + phone
+    attrs[:name] = bp[:name] if bp.key?(:name)
+    attrs[:phone] = bp[:phone] if bp.key?(:phone)
+
+    if @booking.update(attrs)
+      redirect_to root_path(date: date), notice: "Booking updated successfully."
     else
       redirect_to root_path(date: date),
         alert: @booking.errors.full_messages.join(", ")
@@ -53,7 +77,7 @@ class BookingsController < ApplicationController
   end
 
   def clear
-    date = params[:date] ? Date.parse(params[:date]) : Date.new(2026, 3, 27)
+    date = params[:date] ? Date.parse(params[:date]) : (MeetSession.order(:date).first&.date || Date.today)
     count = Booking.where(date: date).delete_all
     redirect_to root_path(date: date), notice: "#{count} booking(s) cleared for #{date.strftime('%B %d, %Y')}."
   end
@@ -61,18 +85,6 @@ class BookingsController < ApplicationController
   private
 
   def booking_params
-    params.require(:booking).permit(:team_id, :lane, :date, :start_time)
-  end
-
-  def generate_time_slots
-    slots = []
-    # 8:00 AM to 8:00 PM
-    (8..19).each do |hour|
-      [0, 15, 30, 45].each do |min|
-        slots << [hour, min]
-      end
-    end
-    slots << [20, 0] # 8:00 PM display row
-    slots
+    params.require(:booking).permit(:team_id, :lane, :date, :start_time, :end_time, :name, :phone)
   end
 end

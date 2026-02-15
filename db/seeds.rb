@@ -17,6 +17,21 @@ end
 
 puts "Seeded #{Team.count} teams."
 
+# Meet sessions for March 27-29, 2026 (8:00 AM – 8:00 PM)
+dates = [Date.new(2026, 3, 27), Date.new(2026, 3, 28), Date.new(2026, 3, 29)]
+session_names = ["Day 1 — Prelims", "Day 2 — Semifinals", "Day 3 — Finals"]
+MeetSession.destroy_all
+dates.each_with_index do |d, i|
+  MeetSession.create!(
+    date: d,
+    name: session_names[i],
+    start_time: Time.utc(2000, 1, 1, 8, 0),
+    end_time: Time.utc(2000, 1, 1, 20, 0)
+  )
+end
+
+puts "Seeded #{MeetSession.count} meet sessions."
+
 # Sample bookings across March 27-29, 2026
 all_teams = Team.all.to_a
 dates = [Date.new(2026, 3, 27), Date.new(2026, 3, 28), Date.new(2026, 3, 29)]
@@ -77,10 +92,12 @@ Booking.destroy_all
 
 bookings_data.each do |b|
   hour, min = b[:start].split(":").map(&:to_i)
+  start = Time.utc(2000, 1, 1, hour, min)
   Booking.create!(
     date: b[:date],
     lane: b[:lane],
-    start_time: Time.utc(2000, 1, 1, hour, min),
+    start_time: start,
+    end_time: start + 60.minutes,
     team: all_teams[b[:team_idx]]
   )
 end

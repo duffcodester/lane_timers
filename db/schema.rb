@@ -10,19 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_14_191751) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_15_013730) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "bookings", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date", null: false
+    t.time "end_time", null: false
     t.integer "lane", null: false
+    t.string "name"
+    t.string "phone"
     t.time "start_time", null: false
     t.integer "team_id", null: false
     t.datetime "updated_at", null: false
     t.index ["lane", "date", "start_time"], name: "index_bookings_on_lane_and_date_and_start_time", unique: true
     t.index ["team_id"], name: "index_bookings_on_team_id"
+  end
+
+  create_table "meet_sessions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.time "end_time", null: false
+    t.string "name"
+    t.time "start_time", null: false
+    t.datetime "updated_at", null: false
+    t.index ["date"], name: "index_meet_sessions_on_date"
   end
 
   create_table "teams", force: :cascade do |t|

@@ -182,6 +182,7 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   vertical-align: top;
   position: relative;
   height: auto;
+  cursor: pointer;
 }
 .booking-content {
   display: flex;
@@ -199,6 +200,20 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
 .booking-time {
   font-size: 0.7rem;
   color: var(--text-light);
+}
+.booking-name {
+  font-size: 0.7rem;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.booking-phone {
+  font-size: 0.65rem;
+  color: var(--text-light);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .btn-remove {
   position: absolute;

@@ -1,0 +1,50 @@
+class MeetSessionsController < ApplicationController
+  before_action :set_meet_session, only: [:edit, :update, :destroy]
+
+  def index
+    @meet_sessions = MeetSession.order(:date, :start_time)
+  end
+
+  def new
+    @meet_session = MeetSession.new
+  end
+
+  def create
+    @meet_session = MeetSession.new(meet_session_params)
+    if @meet_session.save
+      redirect_to meet_sessions_path, notice: "Session created successfully."
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def edit
+  end
+
+  def update
+    if @meet_session.update(meet_session_params)
+      redirect_to meet_sessions_path, notice: "Session updated successfully."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    if Booking.where(date: @meet_session.date).exists?
+      redirect_to meet_sessions_path, alert: "Cannot delete session with existing bookings."
+    else
+      @meet_session.destroy
+      redirect_to meet_sessions_path, notice: "Session deleted."
+    end
+  end
+
+  private
+
+  def set_meet_session
+    @meet_session = MeetSession.find(params[:id])
+  end
+
+  def meet_session_params
+    params.require(:meet_session).permit(:name, :date, :start_time, :end_time)
+  end
+end

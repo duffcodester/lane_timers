@@ -1,0 +1,37 @@
+<%= form_with(model: meet_session, class: "team-form") do |f| %>
+  <% if meet_session.errors.any? %>
+    <div class="errors">
+      <h3><%= pluralize(meet_session.errors.count, "error") %> prevented this session from being saved:</h3>
+      <ul>
+        <% meet_session.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :date %>
+    <%= f.date_field :date, required: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :start_time, "Start Time" %>
+    <%= f.time_field :start_time, required: true, step: 900 %>
+  </div>
+
+  <div class="field">
+    <%= f.label :end_time, "End Time" %>
+    <%= f.time_field :end_time, required: true, step: 900 %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", meet_sessions_path, class: "btn" %>
+  </div>
+<% end %>
