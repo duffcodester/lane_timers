@@ -45,7 +45,6 @@
                       style="background-color: <%= booking.team.color %>20; border-left: 4px solid <%= booking.team.color %>">
                     <div class="booking-content">
                       <span class="team-name"><%= booking.team.abbreviation.presence || booking.team.name %></span>
-                      <span class="booking-time"><%= format_time(booking.start_time.hour, booking.start_time.min) %> - <%= format_time(booking.end_time.hour, booking.end_time.min) %></span>
                       <%= button_to "×", booking_path(booking), method: :delete,
                           class: "btn-remove", data: { turbo_confirm: "Remove this booking?" } %>
                     </div>
@@ -54,7 +53,7 @@
                   # Skip cells covered by rowspan — do nothing
                 %>
               <% else %>
-                <% if hour < 21 %>
+                <% if hour < 19 || (hour == 19 && min < 15) %>
                   <td class="empty-cell"
                       data-lane="<%= lane %>" data-hour="<%= hour %>" data-min="<%= min %>"
                       data-action="dragover->drag#dragover dragenter->drag#dragenter dragleave->drag#dragleave drop->drag#drop"
@@ -140,5 +139,20 @@
   // Close modal on background click
   document.getElementById("booking-modal")?.addEventListener("click", function(e) {
     if (e.target === this) closeBookingForm();
+  });
+
+  // Preserve scroll position after booking form submissions
+  function preserveScroll() {
+    var scrollY = window.scrollY;
+    document.addEventListener("turbo:load", function() {
+      window.scrollTo(0, scrollY);
+    }, { once: true });
+  }
+
+  document.getElementById("booking-form")?.addEventListener("turbo:submit-start", preserveScroll);
+
+  // Also preserve scroll for delete buttons
+  document.querySelectorAll(".btn-remove").forEach(function(btn) {
+    btn.closest("form")?.addEventListener("turbo:submit-start", preserveScroll);
   });
 </script>

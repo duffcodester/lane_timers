@@ -1,7 +1,7 @@
 class Booking < ApplicationRecord
   belongs_to :team
 
-  validates :lane, presence: true, inclusion: { in: 1..10, message: "must be between 1 and 10" }
+  validates :lane, presence: true, inclusion: { in: 0..11, message: "must be between 0 and 11" }
   validates :date, presence: true, inclusion: { in: Date.new(2026, 3, 27)..Date.new(2026, 3, 29), message: "must be between March 27-29, 2026" }
   validates :start_time, presence: true
   validate :start_time_on_15_minute_boundary
@@ -27,8 +27,8 @@ class Booking < ApplicationRecord
     return unless start_time
     hour = start_time.hour
     min = start_time.min
-    if hour < 8 || hour > 21 || (hour == 21 && min > 0)
-      errors.add(:start_time, "must be between 8:00 AM and 9:00 PM")
+    if hour < 8 || hour > 19 || (hour == 19 && min > 0)
+      errors.add(:start_time, "must be between 8:00 AM and 7:00 PM")
     end
   end
 

@@ -1,7 +1,7 @@
 class BookingsController < ApplicationController
   def index
     @date = params[:date] ? Date.parse(params[:date]) : Date.new(2026, 3, 27)
-    @teams = Team.order(:name)
+    @teams = Team.order(:abbreviation)
     @bookings = Booking.where(date: @date).includes(:team)
 
     # Build a lookup: { [lane, hour, minute] => booking }
@@ -14,7 +14,7 @@ class BookingsController < ApplicationController
     end
 
     @time_slots = generate_time_slots
-    @lanes = (1..10).to_a.reverse
+    @lanes = (0..11).to_a.reverse
   end
 
   def create
@@ -66,13 +66,13 @@ class BookingsController < ApplicationController
 
   def generate_time_slots
     slots = []
-    # 8:00 AM to 10:00 PM = 57 slots at 15-min intervals
-    (8..21).each do |hour|
+    # 8:00 AM to 8:00 PM
+    (8..19).each do |hour|
       [0, 15, 30, 45].each do |min|
         slots << [hour, min]
       end
     end
-    slots << [22, 0] # 10:00 PM display row
+    slots << [20, 0] # 8:00 PM display row
     slots
   end
 end

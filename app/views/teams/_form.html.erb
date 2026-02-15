@@ -17,27 +17,27 @@
 
   <div class="field">
     <%= f.label :abbreviation %>
-    <%= f.text_field :abbreviation, maxlength: 5 %>
+    <%= f.text_field :abbreviation, maxlength: 5, required: true %>
   </div>
 
   <div class="field">
     <%= f.label :coach, "Coach Name(s)" %>
-    <%= f.text_field :coach %>
+    <%= f.text_field :coach, required: true %>
   </div>
 
   <div class="field">
     <%= f.label :address %>
-    <%= f.text_field :address %>
+    <%= f.text_field :address, required: true %>
   </div>
 
   <div class="field">
     <%= f.label :phone %>
-    <%= f.phone_field :phone %>
+    <%= f.phone_field :phone, required: true %>
   </div>
 
   <div class="field">
     <%= f.label :email %>
-    <%= f.email_field :email %>
+    <%= f.email_field :email, required: true %>
   </div>
 
   <div class="field">
