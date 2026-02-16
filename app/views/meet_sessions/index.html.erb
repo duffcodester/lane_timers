@@ -9,6 +9,8 @@
       <th>Date</th>
       <th>Start Time</th>
       <th>End Time</th>
+      <th>Break</th>
+      <th>Closed</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -19,6 +21,8 @@
         <td><%= session.date.strftime("%A, %B %d, %Y") %></td>
         <td><%= session.start_time.strftime("%l:%M %p").strip %></td>
         <td><%= session.end_time.strftime("%l:%M %p").strip %></td>
+        <td><%= session.break_period? ? "Yes" : "" %></td>
+        <td><%= session.closed? ? "Yes" : "" %></td>
         <td class="actions-cell">
           <%= link_to "Edit", edit_meet_session_path(session), class: "btn btn-small" %>
           <%= button_to "Duplicate", duplicate_meet_session_path(session), method: :post, class: "btn btn-small" %>

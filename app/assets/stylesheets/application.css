@@ -119,14 +119,12 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   overflow-x: auto;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: var(--surface);
+  display: inline-block;
 }
 
 .schedule-grid {
-  width: 100%;
   border-collapse: collapse;
   font-size: 0.8rem;
-  table-layout: fixed;
 }
 .schedule-grid th {
   background: var(--text);
@@ -183,9 +181,26 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   background: #ebf5fb;
 }
 
-/* Non-bookable cells (after 9 PM) */
+/* Non-bookable / closed cells */
 .disabled-cell {
   background: #f0f0f0;
+  cursor: not-allowed;
+}
+.session-closed {
+  color: var(--danger);
+}
+.closed-label {
+  font-size: 0.6rem;
+  color: var(--danger);
+  font-weight: 600;
+}
+.session-break {
+  color: var(--warning);
+}
+.break-label {
+  font-size: 0.6rem;
+  color: var(--warning);
+  font-weight: 600;
 }
 
 /* Booked cell */

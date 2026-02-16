@@ -30,6 +30,16 @@
     <%= f.time_field :end_time, required: true, step: 900 %>
   </div>
 
+  <div class="field">
+    <%= f.label :break_period, "Break" %>
+    <%= f.check_box :break_period %>
+  </div>
+
+  <div class="field">
+    <%= f.label :closed %>
+    <%= f.check_box :closed %>
+  </div>
+
   <div class="actions">
     <%= f.submit class: "btn btn-primary" %>
     <%= link_to "Cancel", meet_sessions_path, class: "btn" %>

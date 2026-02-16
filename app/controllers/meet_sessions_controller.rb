@@ -68,6 +68,6 @@ class MeetSessionsController < ApplicationController
   end
 
   def meet_session_params
-    params.require(:meet_session).permit(:name, :date, :start_time, :end_time)
+    params.require(:meet_session).permit(:name, :date, :start_time, :end_time, :closed, :break_period)
   end
 end

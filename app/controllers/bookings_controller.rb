@@ -27,7 +27,7 @@ class BookingsController < ApplicationController
       @session_starts = {}
       @sessions.each do |s|
         key = [s.start_time.hour, s.start_time.min]
-        @session_starts[key] = { name: s.name, slots: s.time_slots.size }
+        @session_starts[key] = { name: s.name, slots: s.time_slots.size, closed: s.closed?, break_period: s.break_period? }
       end
 
       # Track which slots are covered by a session rowspan (to skip rendering td)
@@ -36,6 +36,12 @@ class BookingsController < ApplicationController
         s.time_slots.each_with_index do |(h, m), i|
           @session_covered.add([h, m]) if i > 0
         end
+      end
+
+      # Track which time slots belong to closed or break sessions
+      @closed_slots = Set.new
+      @sessions.select { |s| s.closed? || s.break_period? }.each do |s|
+        s.time_slots.each { |h, m| @closed_slots.add([h, m]) }
       end
     end
   end

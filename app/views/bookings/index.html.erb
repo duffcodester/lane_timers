@@ -45,8 +45,14 @@
         <% @time_slots.each do |hour, min| %>
           <tr class="<%= min == 0 ? 'hour-row' : '' %>">
             <% if @session_starts[[hour, min]] %>
-              <td class="session-cell" rowspan="<%= @session_starts[[hour, min]][:slots] %>">
-                <%= @session_starts[[hour, min]][:name] %>
+              <% ss = @session_starts[[hour, min]] %>
+              <td class="session-cell<%= ' session-closed' if ss[:closed] %><%= ' session-break' if ss[:break_period] %>" rowspan="<%= ss[:slots] %>">
+                <%= ss[:name] %>
+                <% if ss[:closed] %>
+                  <br><span class="closed-label">Closed</span>
+                <% elsif ss[:break_period] %>
+                  <br><span class="break-label">Break</span>
+                <% end %>
               </td>
             <% elsif !@session_covered.include?([hour, min]) %>
               <td class="session-cell"></td>
@@ -86,11 +92,15 @@
                   # Skip cells covered by rowspan — do nothing
                 %>
               <% else %>
-                <td class="empty-cell"
-                    data-lane="<%= lane %>" data-hour="<%= hour %>" data-min="<%= min %>"
-                    data-action="dragover->drag#dragover dragenter->drag#dragenter dragleave->drag#dragleave drop->drag#drop"
-                    onclick="openBookingForm(this)">
-                </td>
+                <% if @closed_slots.include?([hour, min]) %>
+                  <td class="disabled-cell"></td>
+                <% else %>
+                  <td class="empty-cell"
+                      data-lane="<%= lane %>" data-hour="<%= hour %>" data-min="<%= min %>"
+                      data-action="dragover->drag#dragover dragenter->drag#dragenter dragleave->drag#dragleave drop->drag#drop"
+                      onclick="openBookingForm(this)">
+                  </td>
+                <% end %>
               <% end %>
             <% end %>
           </tr>
