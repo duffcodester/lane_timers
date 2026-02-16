@@ -3,12 +3,20 @@
 <div class="date-picker">
   <%= form_tag root_path, method: :get, class: "date-form" do %>
     <%= label_tag :date, "Date:" %>
-    <%= date_field_tag :date, @date, onchange: "this.form.submit()" %>
+    <%= date_field_tag :date, @date, onchange: "this.form.submit()", min: @min_date, max: @max_date %>
   <% end %>
 
   <div class="date-nav">
-    <%= link_to "< Prev", root_path(date: @date - 1.day), class: "btn btn-small" %>
-    <%= link_to "Next >", root_path(date: @date + 1.day), class: "btn btn-small" %>
+    <% if @min_date && @date > @min_date %>
+      <%= link_to "< Prev", root_path(date: @date - 1.day), class: "btn btn-small" %>
+    <% else %>
+      <span class="btn btn-small btn-disabled">&lt; Prev</span>
+    <% end %>
+    <% if @max_date && @date < @max_date %>
+      <%= link_to "Next >", root_path(date: @date + 1.day), class: "btn btn-small" %>
+    <% else %>
+      <span class="btn btn-small btn-disabled">Next &gt;</span>
+    <% end %>
   </div>
 
   <%= button_to "Clear All Bookings", clear_bookings_path, method: :delete,

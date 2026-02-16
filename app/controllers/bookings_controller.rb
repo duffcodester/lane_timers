@@ -1,6 +1,8 @@
 class BookingsController < ApplicationController
   def index
-    @date = params[:date] ? Date.parse(params[:date]) : (MeetSession.order(:date).first&.date || Date.today)
+    @min_date = MeetSession.minimum(:date)
+    @max_date = MeetSession.maximum(:date)
+    @date = params[:date] ? Date.parse(params[:date]) : (@min_date || Date.today)
     @teams = Team.order(:abbreviation)
     @sessions = MeetSession.where(date: @date).order(:start_time)
 
