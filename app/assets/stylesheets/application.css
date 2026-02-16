@@ -189,16 +189,21 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
 
 /* Booked cell */
 .booked-cell {
-  padding: 4px 6px !important;
+  padding: 0 !important;
   vertical-align: top;
   position: relative;
-  height: auto;
   cursor: pointer;
+}
+.booked-cell .booking-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 4px 6px;
 }
 .booking-content {
   display: flex;
   flex-direction: column;
-  height: 100%;
   gap: 2px;
 }
 .team-name {
