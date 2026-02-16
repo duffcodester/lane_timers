@@ -1,5 +1,7 @@
 <h1>Teams (<%= @teams.length %>)</h1>
 
+<% all_columns = %w[color name abbreviation coach address phone email hours misc_expense actions] %>
+
 <div class="teams-toolbar">
   <div class="teams-toolbar-left">
     <%= link_to "New Team", new_team_path, class: "btn btn-primary" %>
@@ -7,16 +9,12 @@
     <div class="columns-dropdown">
       <button type="button" class="btn" onclick="toggleColumnsMenu()">Columns</button>
       <div id="columns-menu" class="columns-menu" style="display:none">
-        <label><input type="checkbox" data-col="color" checked onchange="toggleColumn('color')"> Color</label>
-        <label><input type="checkbox" data-col="name" checked onchange="toggleColumn('name')"> Name</label>
-        <label><input type="checkbox" data-col="abbreviation" checked onchange="toggleColumn('abbreviation')"> Abbr</label>
-        <label><input type="checkbox" data-col="coach" checked onchange="toggleColumn('coach')"> Coach</label>
-        <label><input type="checkbox" data-col="address" checked onchange="toggleColumn('address')"> Address</label>
-        <label><input type="checkbox" data-col="phone" checked onchange="toggleColumn('phone')"> Phone</label>
-        <label><input type="checkbox" data-col="email" checked onchange="toggleColumn('email')"> Email</label>
-        <label><input type="checkbox" data-col="hours" checked onchange="toggleColumn('hours')"> Hours</label>
-        <label><input type="checkbox" data-col="misc_expense" checked onchange="toggleColumn('misc_expense')"> Misc Expense</label>
-        <label><input type="checkbox" data-col="actions" checked onchange="toggleColumn('actions')"> Actions</label>
+        <% { "color" => "Color", "name" => "Name", "abbreviation" => "Abbr", "coach" => "Coach",
+             "address" => "Address", "phone" => "Phone", "email" => "Email", "hours" => "Hours",
+             "misc_expense" => "Misc Expense", "actions" => "Actions" }.each do |col, label| %>
+          <% visible = @column_prefs.empty? || @column_prefs[col] != false %>
+          <label><input type="checkbox" data-col="<%= col %>" <%= "checked" if visible %> onchange="toggleColumn('<%= col %>')"> <%= label %></label>
+        <% end %>
       </div>
     </div>
   </div>
@@ -32,31 +30,32 @@
 <table class="teams-table">
   <thead>
     <tr>
-      <th data-col="color">Color</th>
-      <th data-col="name"><%= sort_link "Name", "name" %></th>
-      <th data-col="abbreviation"><%= sort_link "Abbr", "abbreviation" %></th>
-      <th data-col="coach"><%= sort_link "Coach Name(s)", "coach" %></th>
-      <th data-col="address"><%= sort_link "Address", "address" %></th>
-      <th data-col="phone"><%= sort_link "Phone", "phone" %></th>
-      <th data-col="email"><%= sort_link "Email", "email" %></th>
-      <th data-col="hours"><%= sort_link "Hours", "hours" %></th>
-      <th data-col="misc_expense"><%= sort_link "Misc Expense", "misc_expense" %></th>
-      <th data-col="actions">Actions</th>
+      <% hidden = @column_prefs.select { |_, v| v == false }.keys %>
+      <th data-col="color" <%= 'style="display:none"'.html_safe if hidden.include?("color") %>>Color</th>
+      <th data-col="name" <%= 'style="display:none"'.html_safe if hidden.include?("name") %>><%= sort_link "Name", "name" %></th>
+      <th data-col="abbreviation" <%= 'style="display:none"'.html_safe if hidden.include?("abbreviation") %>><%= sort_link "Abbr", "abbreviation" %></th>
+      <th data-col="coach" <%= 'style="display:none"'.html_safe if hidden.include?("coach") %>><%= sort_link "Coach Name(s)", "coach" %></th>
+      <th data-col="address" <%= 'style="display:none"'.html_safe if hidden.include?("address") %>><%= sort_link "Address", "address" %></th>
+      <th data-col="phone" <%= 'style="display:none"'.html_safe if hidden.include?("phone") %>><%= sort_link "Phone", "phone" %></th>
+      <th data-col="email" <%= 'style="display:none"'.html_safe if hidden.include?("email") %>><%= sort_link "Email", "email" %></th>
+      <th data-col="hours" <%= 'style="display:none"'.html_safe if hidden.include?("hours") %>><%= sort_link "Hours", "hours" %></th>
+      <th data-col="misc_expense" <%= 'style="display:none"'.html_safe if hidden.include?("misc_expense") %>><%= sort_link "Misc Expense", "misc_expense" %></th>
+      <th data-col="actions" <%= 'style="display:none"'.html_safe if hidden.include?("actions") %>>Actions</th>
     </tr>
   </thead>
   <tbody>
     <% @teams.each do |team| %>
       <tr>
-        <td data-col="color"><span class="color-swatch" style="background-color: <%= team.color %>"></span></td>
-        <td data-col="name"><%= team.name %></td>
-        <td data-col="abbreviation"><%= team.abbreviation %></td>
-        <td data-col="coach"><%= team.coach %></td>
-        <td data-col="address"><%= team.address %></td>
-        <td data-col="phone"><%= team.phone %></td>
-        <td data-col="email"><%= team.email %></td>
-        <td data-col="hours"><%= "%.2f" % team.total_hours.to_f %></td>
-        <td data-col="misc_expense"><%= number_to_currency(team.misc_expense) %></td>
-        <td data-col="actions" class="actions-cell">
+        <td data-col="color" <%= 'style="display:none"'.html_safe if hidden.include?("color") %>><span class="color-swatch" style="background-color: <%= team.color %>"></span></td>
+        <td data-col="name" <%= 'style="display:none"'.html_safe if hidden.include?("name") %>><%= team.name %></td>
+        <td data-col="abbreviation" <%= 'style="display:none"'.html_safe if hidden.include?("abbreviation") %>><%= team.abbreviation %></td>
+        <td data-col="coach" <%= 'style="display:none"'.html_safe if hidden.include?("coach") %>><%= team.coach %></td>
+        <td data-col="address" <%= 'style="display:none"'.html_safe if hidden.include?("address") %>><%= team.address %></td>
+        <td data-col="phone" <%= 'style="display:none"'.html_safe if hidden.include?("phone") %>><%= team.phone %></td>
+        <td data-col="email" <%= 'style="display:none"'.html_safe if hidden.include?("email") %>><%= team.email %></td>
+        <td data-col="hours" <%= 'style="display:none"'.html_safe if hidden.include?("hours") %>><%= "%.2f" % team.total_hours.to_f %></td>
+        <td data-col="misc_expense" <%= 'style="display:none"'.html_safe if hidden.include?("misc_expense") %>><%= number_to_currency(team.misc_expense) %></td>
+        <td data-col="actions" class="actions-cell" <%= 'style="display:none"'.html_safe if hidden.include?("actions") %>>
           <%= link_to "Edit", edit_team_path(team), class: "btn btn-small" %>
           <%= button_to "Delete", team_path(team), method: :delete, class: "btn btn-small btn-danger",
               data: { turbo_confirm: "Delete #{team.name}?" } %>
@@ -85,27 +84,16 @@
     document.querySelectorAll("#columns-menu input[type='checkbox']").forEach(function(cb) {
       prefs[cb.dataset.col] = cb.checked;
     });
-    localStorage.setItem("teams_columns", JSON.stringify(prefs));
-  }
-
-  function loadColumnPrefs() {
-    var saved = localStorage.getItem("teams_columns");
-    if (!saved) return;
-    var prefs = JSON.parse(saved);
-    Object.keys(prefs).forEach(function(col) {
-      var checkbox = document.querySelector("#columns-menu input[data-col='" + col + "']");
-      if (checkbox) {
-        checkbox.checked = prefs[col];
-        if (!prefs[col]) {
-          document.querySelectorAll(".teams-table [data-col='" + col + "']").forEach(function(cell) {
-            cell.style.display = "none";
-          });
-        }
-      }
+    var token = document.querySelector("meta[name='csrf-token']").content;
+    fetch("<%= teams_columns_setting_path %>", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": token
+      },
+      body: JSON.stringify({ columns: prefs })
     });
   }
-
-  loadColumnPrefs();
 
   // Close menu when clicking outside
   document.addEventListener("click", function(e) {

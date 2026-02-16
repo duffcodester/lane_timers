@@ -27,6 +27,9 @@ class TeamsController < ApplicationController
 
     @sort_column = SORTABLE_COLUMNS[params[:sort]] ? params[:sort] : "name"
     @sort_direction = params[:direction] == "desc" ? "desc" : "asc"
+
+    columns_json = Setting.get("teams_columns")
+    @column_prefs = columns_json ? JSON.parse(columns_json) : {}
     order_sql = "#{SORTABLE_COLUMNS[@sort_column]} #{@sort_direction}"
     @teams = @teams.order(Arel.sql(order_sql))
   end

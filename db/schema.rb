@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_16_015332) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_16_161714) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -38,6 +38,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_015332) do
     t.time "start_time", null: false
     t.datetime "updated_at", null: false
     t.index ["date"], name: "index_meet_sessions_on_date"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "key"
+    t.datetime "updated_at", null: false
+    t.text "value"
+    t.index ["key"], name: "index_settings_on_key", unique: true
   end
 
   create_table "teams", force: :cascade do |t|
