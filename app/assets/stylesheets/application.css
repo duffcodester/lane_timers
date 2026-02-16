@@ -248,6 +248,33 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
 }
 .btn-remove:hover { opacity: 1; background: rgba(231,76,60,0.1); }
 
+/* Resize handles */
+.resize-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 6px;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.booked-cell:hover .resize-handle {
+  opacity: 1;
+}
+.resize-handle-top {
+  top: 0;
+  cursor: n-resize;
+  background: linear-gradient(to bottom, rgba(52,152,219,0.4), transparent);
+}
+.resize-handle-bottom {
+  bottom: 0;
+  cursor: s-resize;
+  background: linear-gradient(to top, rgba(52,152,219,0.4), transparent);
+}
+.resizing {
+  opacity: 0.7;
+}
+
 /* Drag and drop */
 .dragging {
   opacity: 0.4;
