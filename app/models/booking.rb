@@ -10,6 +10,7 @@ class Booking < ApplicationRecord
   validate :minimum_duration
   validates :phone, format: { with: /\A\d{10}\z/, message: "must be a 10-digit number" }, allow_blank: true
   validate :no_overlapping_bookings
+  validate :not_during_closed_or_break
 
   before_validation :normalize_phone
 
@@ -49,6 +50,16 @@ class Booking < ApplicationRecord
     return unless start_time && end_time && end_time > start_time
     if (end_time - start_time) < 15.minutes
       errors.add(:end_time, "booking must be at least 15 minutes")
+    end
+  end
+
+  def not_during_closed_or_break
+    return unless date && start_time && end_time
+    closed_sessions = MeetSession.where(date: date)
+      .where(closed: true).or(MeetSession.where(date: date, break_period: true))
+      .where("start_time < ? AND end_time > ?", end_time, start_time)
+    if closed_sessions.exists?
+      errors.add(:base, "Booking overlaps with a closed or break session")
     end
   end
 

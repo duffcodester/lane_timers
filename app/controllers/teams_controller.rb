@@ -1,11 +1,21 @@
 class TeamsController < ApplicationController
   before_action :set_team, only: [:show, :edit, :update, :destroy]
 
+  SORTABLE_COLUMNS = {
+    "name" => "teams.name",
+    "abbreviation" => "teams.abbreviation",
+    "coach" => "teams.coach",
+    "address" => "teams.address",
+    "phone" => "teams.phone",
+    "email" => "teams.email",
+    "hours" => "total_hours",
+    "misc_expense" => "teams.misc_expense"
+  }.freeze
+
   def index
     @teams = Team.left_joins(:bookings)
                  .select("teams.*, COALESCE(SUM(EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0), 0) AS total_hours")
                  .group("teams.id")
-                 .order("teams.name ASC")
 
     if params[:search].present?
       q = "%#{params[:search]}%"
@@ -14,6 +24,11 @@ class TeamsController < ApplicationController
         q: q
       )
     end
+
+    @sort_column = SORTABLE_COLUMNS[params[:sort]] ? params[:sort] : "name"
+    @sort_direction = params[:direction] == "desc" ? "desc" : "asc"
+    order_sql = "#{SORTABLE_COLUMNS[@sort_column]} #{@sort_direction}"
+    @teams = @teams.order(Arel.sql(order_sql))
   end
 
   def export
@@ -61,23 +76,8 @@ class TeamsController < ApplicationController
       end
     end
 
-    # Sessions sheet
-    sessions = MeetSession.order(:date, :start_time)
-    wb.add_worksheet(name: "Sessions") do |sheet|
-      header_style = sheet.styles.add_style(b: true, bg_color: "2C3E50", fg_color: "FFFFFF")
-      sheet.add_row ["Date", "Name", "Start Time", "End Time"], style: header_style
-      sessions.each do |s|
-        sheet.add_row [
-          s.date.strftime("%Y-%m-%d"),
-          s.name,
-          s.start_time.strftime("%l:%M %p").strip,
-          s.end_time.strftime("%l:%M %p").strip
-        ]
-      end
-    end
-
     send_data package.to_stream.read,
-      filename: "lane_timers_export_#{Date.today}.xlsx",
+      filename: "lane_timers_export_#{Time.current.strftime('%Y-%m-%d_%H%M%S')}.xlsx",
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
   end
 

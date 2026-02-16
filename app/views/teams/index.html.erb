@@ -18,14 +18,14 @@
   <thead>
     <tr>
       <th>Color</th>
-      <th>Name</th>
-      <th>Abbr</th>
-      <th>Coach Name(s)</th>
-      <th>Address</th>
-      <th>Phone</th>
-      <th>Email</th>
-      <th>Hours</th>
-      <th>Misc Expense</th>
+      <th><%= sort_link "Name", "name" %></th>
+      <th><%= sort_link "Abbr", "abbreviation" %></th>
+      <th><%= sort_link "Coach Name(s)", "coach" %></th>
+      <th><%= sort_link "Address", "address" %></th>
+      <th><%= sort_link "Phone", "phone" %></th>
+      <th><%= sort_link "Email", "email" %></th>
+      <th><%= sort_link "Hours", "hours" %></th>
+      <th><%= sort_link "Misc Expense", "misc_expense" %></th>
       <th>Actions</th>
     </tr>
   </thead>
