@@ -4,6 +4,21 @@
   <div class="teams-toolbar-left">
     <%= link_to "New Team", new_team_path, class: "btn btn-primary" %>
     <%= link_to "Export to Excel", export_teams_path, class: "btn" %>
+    <div class="columns-dropdown">
+      <button type="button" class="btn" onclick="toggleColumnsMenu()">Columns</button>
+      <div id="columns-menu" class="columns-menu" style="display:none">
+        <label><input type="checkbox" data-col="color" checked onchange="toggleColumn('color')"> Color</label>
+        <label><input type="checkbox" data-col="name" checked onchange="toggleColumn('name')"> Name</label>
+        <label><input type="checkbox" data-col="abbreviation" checked onchange="toggleColumn('abbreviation')"> Abbr</label>
+        <label><input type="checkbox" data-col="coach" checked onchange="toggleColumn('coach')"> Coach</label>
+        <label><input type="checkbox" data-col="address" checked onchange="toggleColumn('address')"> Address</label>
+        <label><input type="checkbox" data-col="phone" checked onchange="toggleColumn('phone')"> Phone</label>
+        <label><input type="checkbox" data-col="email" checked onchange="toggleColumn('email')"> Email</label>
+        <label><input type="checkbox" data-col="hours" checked onchange="toggleColumn('hours')"> Hours</label>
+        <label><input type="checkbox" data-col="misc_expense" checked onchange="toggleColumn('misc_expense')"> Misc Expense</label>
+        <label><input type="checkbox" data-col="actions" checked onchange="toggleColumn('actions')"> Actions</label>
+      </div>
+    </div>
   </div>
   <%= form_tag teams_path, method: :get, class: "search-form" do %>
     <%= text_field_tag :search, params[:search], placeholder: "Search teams...", class: "search-input" %>
@@ -17,31 +32,31 @@
 <table class="teams-table">
   <thead>
     <tr>
-      <th>Color</th>
-      <th><%= sort_link "Name", "name" %></th>
-      <th><%= sort_link "Abbr", "abbreviation" %></th>
-      <th><%= sort_link "Coach Name(s)", "coach" %></th>
-      <th><%= sort_link "Address", "address" %></th>
-      <th><%= sort_link "Phone", "phone" %></th>
-      <th><%= sort_link "Email", "email" %></th>
-      <th><%= sort_link "Hours", "hours" %></th>
-      <th><%= sort_link "Misc Expense", "misc_expense" %></th>
-      <th>Actions</th>
+      <th data-col="color">Color</th>
+      <th data-col="name"><%= sort_link "Name", "name" %></th>
+      <th data-col="abbreviation"><%= sort_link "Abbr", "abbreviation" %></th>
+      <th data-col="coach"><%= sort_link "Coach Name(s)", "coach" %></th>
+      <th data-col="address"><%= sort_link "Address", "address" %></th>
+      <th data-col="phone"><%= sort_link "Phone", "phone" %></th>
+      <th data-col="email"><%= sort_link "Email", "email" %></th>
+      <th data-col="hours"><%= sort_link "Hours", "hours" %></th>
+      <th data-col="misc_expense"><%= sort_link "Misc Expense", "misc_expense" %></th>
+      <th data-col="actions">Actions</th>
     </tr>
   </thead>
   <tbody>
     <% @teams.each do |team| %>
       <tr>
-        <td><span class="color-swatch" style="background-color: <%= team.color %>"></span></td>
-        <td><%= team.name %></td>
-        <td><%= team.abbreviation %></td>
-        <td><%= team.coach %></td>
-        <td><%= team.address %></td>
-        <td><%= team.phone %></td>
-        <td><%= team.email %></td>
-        <td><%= "%.2f" % team.total_hours.to_f %></td>
-        <td><%= number_to_currency(team.misc_expense) %></td>
-        <td class="actions-cell">
+        <td data-col="color"><span class="color-swatch" style="background-color: <%= team.color %>"></span></td>
+        <td data-col="name"><%= team.name %></td>
+        <td data-col="abbreviation"><%= team.abbreviation %></td>
+        <td data-col="coach"><%= team.coach %></td>
+        <td data-col="address"><%= team.address %></td>
+        <td data-col="phone"><%= team.phone %></td>
+        <td data-col="email"><%= team.email %></td>
+        <td data-col="hours"><%= "%.2f" % team.total_hours.to_f %></td>
+        <td data-col="misc_expense"><%= number_to_currency(team.misc_expense) %></td>
+        <td data-col="actions" class="actions-cell">
           <%= link_to "Edit", edit_team_path(team), class: "btn btn-small" %>
           <%= button_to "Delete", team_path(team), method: :delete, class: "btn btn-small btn-danger",
               data: { turbo_confirm: "Delete #{team.name}?" } %>
@@ -50,3 +65,53 @@
     <% end %>
   </tbody>
 </table>
+
+<script>
+  function toggleColumnsMenu() {
+    var menu = document.getElementById("columns-menu");
+    menu.style.display = menu.style.display === "none" ? "block" : "none";
+  }
+
+  function toggleColumn(col) {
+    var cells = document.querySelectorAll(".teams-table [data-col='" + col + "']");
+    var checkbox = document.querySelector("input[data-col='" + col + "']");
+    var display = checkbox.checked ? "" : "none";
+    cells.forEach(function(cell) { cell.style.display = display; });
+    saveColumnPrefs();
+  }
+
+  function saveColumnPrefs() {
+    var prefs = {};
+    document.querySelectorAll("#columns-menu input[type='checkbox']").forEach(function(cb) {
+      prefs[cb.dataset.col] = cb.checked;
+    });
+    localStorage.setItem("teams_columns", JSON.stringify(prefs));
+  }
+
+  function loadColumnPrefs() {
+    var saved = localStorage.getItem("teams_columns");
+    if (!saved) return;
+    var prefs = JSON.parse(saved);
+    Object.keys(prefs).forEach(function(col) {
+      var checkbox = document.querySelector("#columns-menu input[data-col='" + col + "']");
+      if (checkbox) {
+        checkbox.checked = prefs[col];
+        if (!prefs[col]) {
+          document.querySelectorAll(".teams-table [data-col='" + col + "']").forEach(function(cell) {
+            cell.style.display = "none";
+          });
+        }
+      }
+    });
+  }
+
+  loadColumnPrefs();
+
+  // Close menu when clicking outside
+  document.addEventListener("click", function(e) {
+    var dropdown = document.querySelector(".columns-dropdown");
+    if (dropdown && !dropdown.contains(e.target)) {
+      document.getElementById("columns-menu").style.display = "none";
+    }
+  });
+</script>
