@@ -6,7 +6,19 @@ class MeetSessionsController < ApplicationController
   end
 
   def new
-    @meet_session = MeetSession.new
+    last_session = MeetSession.order(:date, :end_time).last
+    if last_session
+      @meet_session = MeetSession.new(
+        date: last_session.date,
+        start_time: last_session.end_time,
+        end_time: last_session.end_time + 1.hour
+      )
+    else
+      @meet_session = MeetSession.new(
+        start_time: Time.zone.parse("08:00"),
+        end_time: Time.zone.parse("09:00")
+      )
+    end
   end
 
   def create
