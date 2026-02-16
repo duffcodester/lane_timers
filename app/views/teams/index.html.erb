@@ -1,7 +1,18 @@
 <h1>Teams (<%= @teams.length %>)</h1>
 
-<%= link_to "New Team", new_team_path, class: "btn btn-primary" %>
-<%= link_to "Export to Excel", export_teams_path, class: "btn" %>
+<div class="teams-toolbar">
+  <div class="teams-toolbar-left">
+    <%= link_to "New Team", new_team_path, class: "btn btn-primary" %>
+    <%= link_to "Export to Excel", export_teams_path, class: "btn" %>
+  </div>
+  <%= form_tag teams_path, method: :get, class: "search-form" do %>
+    <%= text_field_tag :search, params[:search], placeholder: "Search teams...", class: "search-input" %>
+    <%= submit_tag "Search", class: "btn btn-small" %>
+    <% if params[:search].present? %>
+      <%= link_to "Clear", teams_path, class: "btn btn-small" %>
+    <% end %>
+  <% end %>
+</div>
 
 <table class="teams-table">
   <thead>

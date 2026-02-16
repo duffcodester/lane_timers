@@ -6,6 +6,14 @@ class TeamsController < ApplicationController
                  .select("teams.*, COALESCE(SUM(EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0), 0) AS total_hours")
                  .group("teams.id")
                  .order("teams.name ASC")
+
+    if params[:search].present?
+      q = "%#{params[:search]}%"
+      @teams = @teams.where(
+        "teams.name ILIKE :q OR teams.abbreviation ILIKE :q OR teams.coach ILIKE :q OR teams.address ILIKE :q OR teams.phone ILIKE :q OR teams.email ILIKE :q",
+        q: q
+      )
+    end
   end
 
   def export
