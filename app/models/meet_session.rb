@@ -1,4 +1,6 @@
 class MeetSession < ApplicationRecord
+  belongs_to :meet, optional: true
+
   validates :date, presence: true
   validates :start_time, presence: true
   validates :end_time, presence: true

@@ -14,9 +14,14 @@ Rails.application.routes.draw do
     post :duplicate, on: :member
   end
   delete "bookings/clear", to: "bookings#clear", as: :clear_bookings
-  resources :bookings, only: [:create, :destroy, :update]
+  resources :bookings, only: [:create, :edit, :update, :destroy] do
+    collection do
+      get :list
+    end
+  end
 
   resources :users, only: [:index, :new, :create, :destroy]
+  resources :meets
 
   patch "settings/teams_columns", to: "settings#update_teams_columns", as: :teams_columns_setting
 

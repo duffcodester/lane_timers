@@ -11,6 +11,14 @@
   <% end %>
 
   <div class="field">
+    <%= f.label :meet_id, "Meet" %>
+    <%= f.select :meet_id,
+          options_from_collection_for_select(@meets, :id, :name, meet_session.meet_id),
+          { include_blank: "— None —" },
+          class: "form-select" %>
+  </div>
+
+  <div class="field">
     <%= f.label :name %>
     <%= f.text_field :name %>
   </div>

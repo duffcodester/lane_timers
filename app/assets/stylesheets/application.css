@@ -203,6 +203,24 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   font-weight: 600;
 }
 
+/* Hidden team booking */
+.booked-cell.team-hidden {
+  background: var(--surface) !important;
+  border-left: 1px solid var(--border) !important;
+  cursor: default;
+  pointer-events: none;
+}
+.booked-cell.team-hidden > * { display: none; }
+
+/* Team filter action buttons row */
+.team-filter-actions {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.4rem 0.5rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.25rem;
+}
+
 /* Booked cell */
 .booked-cell {
   padding: 0 !important;

@@ -1,0 +1,110 @@
+<h1>Bookings (<%= @total_count %>)</h1>
+
+<div class="teams-toolbar">
+  <div class="teams-toolbar-left">
+    <% if @teams.any? %>
+      <div class="columns-dropdown" id="team-filter-dropdown">
+        <button type="button" class="btn" onclick="toggleTeamFilterMenu()">Filter Teams</button>
+        <div id="team-filter-menu" class="columns-menu" style="display:none">
+          <%= form_with url: list_bookings_path, method: :get, id: "team-filter-form" do %>
+            <%= hidden_field_tag :sort,      params[:sort]      if params[:sort].present? %>
+            <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
+            <%= hidden_field_tag :filter_active, 1 %>
+
+            <div class="team-filter-actions">
+              <button type="button" class="btn btn-small" onclick="selectAllTeams()">All</button>
+              <button type="button" class="btn btn-small" onclick="selectNoneTeams()">None</button>
+            </div>
+
+            <% @teams.each do |team| %>
+              <label>
+                <input type="checkbox" name="team_ids[]" value="<%= team.id %>"
+                       onchange="this.form.submit()"
+                       <%= "checked" if @selected_team_ids.include?(team.id) %>>
+                <span class="color-swatch" style="background-color: <%= team.color %>; display:inline-block; vertical-align:middle"></span>
+                <%= team.abbreviation.presence || team.name %>
+              </label>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<table class="teams-table">
+  <thead>
+    <tr>
+      <th><%= bookings_sort_link "Team",       "team" %></th>
+      <th><%= bookings_sort_link "Date",       "date" %></th>
+      <th><%= bookings_sort_link "Start Time", "start_time" %></th>
+      <th><%= bookings_sort_link "End Time",   "end_time" %></th>
+      <th><%= bookings_sort_link "Lane",       "lane" %></th>
+      <th><%= bookings_sort_link "Hours",      "hours" %></th>
+      <th><%= bookings_sort_link "Name",       "name" %></th>
+      <th><%= bookings_sort_link "Phone",      "phone" %></th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @bookings_list.each do |booking| %>
+      <tr>
+        <td>
+          <span class="color-swatch" style="background-color: <%= booking.team_color %>"></span>
+          <%= booking.team_abbreviation.presence || booking.team_name %>
+        </td>
+        <td><%= booking.date.strftime("%b %-d, %Y") %></td>
+        <td><%= booking.start_time.strftime("%l:%M %p").strip %></td>
+        <td><%= booking.end_time.strftime("%l:%M %p").strip %></td>
+        <td><%= booking.lane %></td>
+        <td><%= "%.2f" % booking.hours.to_f %></td>
+        <td><%= booking.name %></td>
+        <td><%= booking.formatted_phone %></td>
+        <td class="actions-cell">
+          <%= link_to "Edit", edit_booking_path(booking), class: "btn btn-small" %>
+          <%= button_to "Delete", booking_path(booking), method: :delete,
+              params: { source: "list" },
+              class: "btn btn-small btn-danger",
+              data: { turbo_confirm: "Delete this booking?" } %>
+        </td>
+      </tr>
+    <% end %>
+    <% if @bookings_list.empty? %>
+      <tr>
+        <td colspan="8" style="text-align:center; color: var(--text-light); padding: 2rem;">
+          No bookings found.
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= render "shared/pagination", current_page: @current_page, total_pages: @total_pages %>
+
+<script>
+  function toggleTeamFilterMenu() {
+    var menu = document.getElementById("team-filter-menu");
+    menu.style.display = menu.style.display === "none" ? "block" : "none";
+  }
+
+  function selectAllTeams() {
+    document.querySelectorAll("#team-filter-form input[type='checkbox']").forEach(function(cb) {
+      cb.checked = true;
+    });
+    document.getElementById("team-filter-form").submit();
+  }
+
+  function selectNoneTeams() {
+    document.querySelectorAll("#team-filter-form input[type='checkbox']").forEach(function(cb) {
+      cb.checked = false;
+    });
+    document.getElementById("team-filter-form").submit();
+  }
+
+  document.addEventListener("click", function(e) {
+    var dropdown = document.getElementById("team-filter-dropdown");
+    if (dropdown && !dropdown.contains(e.target)) {
+      document.getElementById("team-filter-menu").style.display = "none";
+    }
+  });
+</script>

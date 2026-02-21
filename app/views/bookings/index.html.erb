@@ -19,6 +19,27 @@
     <% end %>
   </div>
 
+  <% if @teams&.any? %>
+    <div class="columns-dropdown" id="team-filter-dropdown">
+      <button type="button" class="btn btn-small" onclick="toggleTeamFilterMenu()">Filter Teams</button>
+      <div id="team-filter-menu" class="columns-menu" style="display:none">
+        <div class="team-filter-actions">
+          <button type="button" class="btn btn-small" onclick="selectAllTeams()">All</button>
+          <button type="button" class="btn btn-small" onclick="selectNoneTeams()">None</button>
+        </div>
+        <% @teams.each do |team| %>
+          <label>
+            <input type="checkbox" data-team-id="<%= team.id %>"
+                   onchange="applyTeamFilter()"
+                   checked>
+            <span class="color-swatch" style="background-color: <%= team.color %>; display:inline-block; vertical-align:middle"></span>
+            <%= team.abbreviation.presence || team.name %>
+          </label>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <%= button_to "Clear All Bookings", clear_bookings_path, method: :delete,
       class: "btn btn-small btn-danger",
       params: { date: @date },
@@ -64,6 +85,7 @@
                 <% if booking.start_time.hour == hour && booking.start_time.min == min %>
                   <td class="booked-cell" rowspan="<%= booking.duration_slots %>"
                       draggable="true"
+                      data-team-id="<%= booking.team.id %>"
                       data-booking-id="<%= booking.id %>"
                       data-booking-name="<%= booking.name %>"
                       data-booking-phone="<%= booking.phone %>"
@@ -304,4 +326,72 @@
   document.querySelectorAll(".btn-remove").forEach(function(btn) {
     btn.closest("form")?.addEventListener("turbo:submit-start", preserveScroll);
   });
+
+  // ── Team filter ──────────────────────────────────────────────────────────
+  var FILTER_KEY = "schedule_team_filter";
+
+  function toggleTeamFilterMenu() {
+    var menu = document.getElementById("team-filter-menu");
+    menu.style.display = menu.style.display === "none" ? "block" : "none";
+  }
+
+  function applyTeamFilter() {
+    var hidden = getHiddenTeams();
+    saveHiddenTeams(hidden);
+    document.querySelectorAll(".booked-cell[data-team-id]").forEach(function(cell) {
+      if (hidden.includes(cell.dataset.teamId)) {
+        cell.classList.add("team-hidden");
+      } else {
+        cell.classList.remove("team-hidden");
+      }
+    });
+  }
+
+  function selectAllTeams() {
+    document.querySelectorAll("#team-filter-menu input[type='checkbox']").forEach(function(cb) {
+      cb.checked = true;
+    });
+    applyTeamFilter();
+  }
+
+  function selectNoneTeams() {
+    document.querySelectorAll("#team-filter-menu input[type='checkbox']").forEach(function(cb) {
+      cb.checked = false;
+    });
+    applyTeamFilter();
+  }
+
+  function getHiddenTeams() {
+    var hidden = [];
+    document.querySelectorAll("#team-filter-menu input[type='checkbox']").forEach(function(cb) {
+      if (!cb.checked) hidden.push(cb.dataset.teamId);
+    });
+    return hidden;
+  }
+
+  function saveHiddenTeams(hidden) {
+    localStorage.setItem(FILTER_KEY, JSON.stringify(hidden));
+  }
+
+  function loadTeamFilter() {
+    var saved = localStorage.getItem(FILTER_KEY);
+    if (!saved) return;
+    var hidden;
+    try { hidden = JSON.parse(saved); } catch(e) { return; }
+    if (!Array.isArray(hidden) || hidden.length === 0) return;
+    document.querySelectorAll("#team-filter-menu input[type='checkbox']").forEach(function(cb) {
+      if (hidden.includes(cb.dataset.teamId)) cb.checked = false;
+    });
+    applyTeamFilter();
+  }
+
+  // Close team filter menu when clicking outside
+  document.addEventListener("click", function(e) {
+    var dropdown = document.getElementById("team-filter-dropdown");
+    if (dropdown && !dropdown.contains(e.target)) {
+      document.getElementById("team-filter-menu").style.display = "none";
+    }
+  });
+
+  loadTeamFilter();
 </script>

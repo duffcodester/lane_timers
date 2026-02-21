@@ -1,0 +1,27 @@
+<%= form_with(model: meet, class: "team-form") do |f| %>
+  <% if meet.errors.any? %>
+    <div class="errors">
+      <h3><%= pluralize(meet.errors.count, "error") %> prevented this meet from being saved:</h3>
+      <ul>
+        <% meet.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name, required: true, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :location %>
+    <%= f.text_field :location %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", meets_path, class: "btn" %>
+  </div>
+<% end %>

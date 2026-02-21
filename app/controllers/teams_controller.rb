@@ -12,7 +12,7 @@ class TeamsController < ApplicationController
     "misc_expense" => "teams.misc_expense"
   }.freeze
 
-  PER_PAGE = 10
+  PER_PAGE = 12
 
   def index
     base = Team.all

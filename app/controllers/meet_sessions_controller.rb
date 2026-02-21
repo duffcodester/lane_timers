@@ -1,28 +1,33 @@
 class MeetSessionsController < ApplicationController
   before_action :set_meet_session, only: [:edit, :update, :destroy, :duplicate]
+  before_action :set_meets, only: [:new, :create, :edit, :update]
 
-  PER_PAGE = 10
+  PER_PAGE = 12
 
   def index
     @total_count = MeetSession.count
     @current_page = [params[:page].to_i, 1].max
     @total_pages = [(@total_count.to_f / PER_PAGE).ceil, 1].max
 
-    @meet_sessions = MeetSession.order(:date, :start_time)
+    @meet_sessions = MeetSession.includes(:meet)
+                                .order(:date, :start_time)
                                 .limit(PER_PAGE)
                                 .offset((@current_page - 1) * PER_PAGE)
   end
 
   def new
+    default_meet = Meet.order(created_at: :desc).first
     last_session = MeetSession.order(:date, :end_time).last
     if last_session
       @meet_session = MeetSession.new(
+        meet: default_meet,
         date: last_session.date,
         start_time: last_session.end_time,
         end_time: last_session.end_time + 1.hour
       )
     else
       @meet_session = MeetSession.new(
+        meet: default_meet,
         start_time: Time.zone.parse("08:00"),
         end_time: Time.zone.parse("09:00")
       )
@@ -75,7 +80,11 @@ class MeetSessionsController < ApplicationController
     @meet_session = MeetSession.find(params[:id])
   end
 
+  def set_meets
+    @meets = Meet.order(:name)
+  end
+
   def meet_session_params
-    params.require(:meet_session).permit(:name, :date, :start_time, :end_time, :closed, :break_period)
+    params.require(:meet_session).permit(:meet_id, :name, :date, :start_time, :end_time, :closed, :break_period)
   end
 end

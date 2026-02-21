@@ -1,6 +1,6 @@
 <h1>Teams (<%= @total_count %>)</h1>
 
-<% all_columns = %w[color name abbreviation coach address phone email hours misc_expense actions] %>
+<% all_columns = %w[name abbreviation coach address phone email hours misc_expense actions] %>
 
 <div class="teams-toolbar">
   <div class="teams-toolbar-left">
@@ -13,7 +13,7 @@
     <div class="columns-dropdown">
       <button type="button" class="btn" onclick="toggleColumnsMenu()">Columns</button>
       <div id="columns-menu" class="columns-menu" style="display:none">
-        <% { "color" => "Color", "name" => "Name", "abbreviation" => "Abbr", "coach" => "Coach",
+        <% { "name" => "Name", "abbreviation" => "Abbr", "coach" => "Coach",
              "address" => "Address", "phone" => "Phone", "email" => "Email", "hours" => "Hours",
              "misc_expense" => "Misc Expense", "actions" => "Actions" }.each do |col, label| %>
           <% visible = @column_prefs.empty? || @column_prefs[col] != false %>
@@ -35,7 +35,6 @@
   <thead>
     <tr>
       <% hidden = @column_prefs.select { |_, v| v == false }.keys %>
-      <th data-col="color" <%= 'style="display:none"'.html_safe if hidden.include?("color") %>>Color</th>
       <th data-col="name" <%= 'style="display:none"'.html_safe if hidden.include?("name") %>><%= sort_link "Name", "name" %></th>
       <th data-col="abbreviation" <%= 'style="display:none"'.html_safe if hidden.include?("abbreviation") %>><%= sort_link "Abbr", "abbreviation" %></th>
       <th data-col="coach" <%= 'style="display:none"'.html_safe if hidden.include?("coach") %>><%= sort_link "Coach Name(s)", "coach" %></th>
@@ -50,8 +49,10 @@
   <tbody>
     <% @teams.each do |team| %>
       <tr>
-        <td data-col="color" <%= 'style="display:none"'.html_safe if hidden.include?("color") %>><span class="color-swatch" style="background-color: <%= team.color %>"></span></td>
-        <td data-col="name" <%= 'style="display:none"'.html_safe if hidden.include?("name") %>><%= team.name %></td>
+        <td data-col="name" <%= 'style="display:none"'.html_safe if hidden.include?("name") %>>
+          <span class="color-swatch" style="background-color: <%= team.color %>; display:inline-block; vertical-align:middle"></span>
+          <%= team.name %>
+        </td>
         <td data-col="abbreviation" <%= 'style="display:none"'.html_safe if hidden.include?("abbreviation") %>><%= team.abbreviation %></td>
         <td data-col="coach" <%= 'style="display:none"'.html_safe if hidden.include?("coach") %>><%= team.coach %></td>
         <td data-col="address" <%= 'style="display:none"'.html_safe if hidden.include?("address") %>><%= team.address %></td>

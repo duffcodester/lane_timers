@@ -1,4 +1,49 @@
 class BookingsController < ApplicationController
+  PER_PAGE = 12
+
+  SORTABLE_COLUMNS = {
+    "team"       => "teams.name",
+    "date"       => "bookings.date",
+    "lane"       => "bookings.lane",
+    "start_time" => "bookings.start_time",
+    "end_time"   => "bookings.end_time",
+    "hours"      => "hours",
+    "name"       => "bookings.name",
+    "phone"      => "bookings.phone"
+  }.freeze
+
+  def list
+    @sort_column    = SORTABLE_COLUMNS[params[:sort]] ? params[:sort] : "start_time"
+    @sort_direction = params[:direction] == "desc" ? "desc" : "asc"
+    order_sql       = "#{SORTABLE_COLUMNS[@sort_column]} #{@sort_direction}"
+
+    scope = Booking.joins(:team)
+                   .select("bookings.*, teams.name AS team_name, teams.abbreviation AS team_abbreviation, teams.color AS team_color, EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0 AS hours")
+                   .order(Arel.sql(order_sql))
+
+    @teams = Team.order(:name)
+
+    # filter_active distinguishes "no filter applied" from "no teams selected"
+    if params[:filter_active].present?
+      @selected_team_ids = Array(params[:team_ids]).map(&:to_i)
+      scope = scope.where(team_id: @selected_team_ids) if @selected_team_ids.any?
+      scope = scope.none if @selected_team_ids.empty?
+    else
+      @selected_team_ids = @teams.pluck(:id)
+    end
+
+    count_scope = Booking.joins(:team)
+    if params[:filter_active].present?
+      count_scope = @selected_team_ids.any? ? count_scope.where(team_id: @selected_team_ids) : count_scope.none
+    end
+
+    @total_count  = count_scope.count
+    @current_page = [params[:page].to_i, 1].max
+    @total_pages  = [(@total_count.to_f / PER_PAGE).ceil, 1].max
+
+    @bookings_list = scope.limit(PER_PAGE).offset((@current_page - 1) * PER_PAGE)
+  end
+
   def index
     @min_date = MeetSession.minimum(:date)
     @max_date = MeetSession.maximum(:date)
@@ -46,6 +91,11 @@ class BookingsController < ApplicationController
     end
   end
 
+  def edit
+    @booking = Booking.find(params[:id])
+    @teams = Team.order(:abbreviation)
+  end
+
   def create
     @booking = Booking.new(booking_params)
     if @booking.save
@@ -84,19 +134,35 @@ class BookingsController < ApplicationController
     attrs[:name] = bp[:name] if bp.key?(:name)
     attrs[:phone] = bp[:phone] if bp.key?(:phone)
 
-    if @booking.update(attrs)
-      redirect_to root_path(date: date), notice: "Booking updated successfully."
+    if params[:source] == "list"
+      # Full update from the edit page
+      if @booking.update(booking_edit_params)
+        redirect_to list_bookings_path, notice: "Booking updated."
+      else
+        @teams = Team.order(:abbreviation)
+        render :edit, status: :unprocessable_entity
+      end
     else
-      redirect_to root_path(date: date),
-        alert: @booking.errors.full_messages.join(", ")
+      # Partial update from drag-drop / schedule modal
+      if @booking.update(attrs)
+        redirect_to root_path(date: date), notice: "Booking updated successfully."
+      else
+        redirect_to root_path(date: date),
+          alert: @booking.errors.full_messages.join(", ")
+      end
     end
   end
 
   def destroy
     @booking = Booking.find(params[:id])
     date = @booking.date
+    from_list = params[:source] == "list"
     @booking.destroy
-    redirect_to root_path(date: date), notice: "Booking removed."
+    if from_list
+      redirect_to list_bookings_path, notice: "Booking removed."
+    else
+      redirect_to root_path(date: date), notice: "Booking removed."
+    end
   end
 
   def clear
@@ -108,6 +174,10 @@ class BookingsController < ApplicationController
   private
 
   def booking_params
+    params.require(:booking).permit(:team_id, :lane, :date, :start_time, :end_time, :name, :phone)
+  end
+
+  def booking_edit_params
     params.require(:booking).permit(:team_id, :lane, :date, :start_time, :end_time, :name, :phone)
   end
 end

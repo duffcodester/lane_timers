@@ -1,0 +1,39 @@
+<h1>Meets (<%= @meets.count %>)</h1>
+
+<div class="teams-toolbar">
+  <div class="teams-toolbar-left">
+    <%= link_to "New Meet", new_meet_path, class: "btn btn-primary" %>
+  </div>
+</div>
+
+<table class="teams-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Location</th>
+      <th>Sessions</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @meets.each do |meet| %>
+      <tr>
+        <td><strong><%= meet.name %></strong></td>
+        <td><%= meet.location.presence || "—" %></td>
+        <td><%= meet.meet_sessions.count %></td>
+        <td class="actions-cell">
+          <%= link_to "Edit", edit_meet_path(meet), class: "btn btn-small" %>
+          <%= button_to "Delete", meet_path(meet), method: :delete, class: "btn btn-small btn-danger",
+              data: { turbo_confirm: "Delete meet \"#{meet.name}\"?" } %>
+        </td>
+      </tr>
+    <% end %>
+    <% if @meets.empty? %>
+      <tr>
+        <td colspan="4" style="text-align:center; color: var(--text-light); padding: 2rem;">
+          No meets yet. <%= link_to "Add the first one", new_meet_path %>.
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -65,6 +65,17 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_response :ok
   end
 
+  test "bookings list requires authentication" do
+    get list_bookings_path
+    assert_requires_login
+  end
+
+  test "bookings list is accessible when authenticated" do
+    log_in_as users(:alice)
+    get list_bookings_path
+    assert_response :ok
+  end
+
   test "create booking requires authentication" do
     post bookings_path, params: { booking: { lane: 5, date: "2026-03-27",
                                              start_time: "10:00", end_time: "11:00" } }
@@ -225,6 +236,46 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
 
   test "delete user requires authentication" do
     delete user_path(users(:bob))
+    assert_requires_login
+  end
+
+  # -----------------------------------------------------------------------
+  # Meets
+  # -----------------------------------------------------------------------
+
+  test "meets index requires authentication" do
+    get meets_path
+    assert_requires_login
+  end
+
+  test "meets index is accessible when authenticated" do
+    log_in_as users(:alice)
+    get meets_path
+    assert_response :ok
+  end
+
+  test "new meet form requires authentication" do
+    get new_meet_path
+    assert_requires_login
+  end
+
+  test "meet edit form requires authentication" do
+    get edit_meet_path(meets(:spring_invitational))
+    assert_requires_login
+  end
+
+  test "create meet requires authentication" do
+    post meets_path, params: { meet: { name: "Summer Classic" } }
+    assert_requires_login
+  end
+
+  test "update meet requires authentication" do
+    patch meet_path(meets(:spring_invitational)), params: { meet: { name: "Updated" } }
+    assert_requires_login
+  end
+
+  test "delete meet requires authentication" do
+    delete meet_path(meets(:spring_invitational))
     assert_requires_login
   end
 

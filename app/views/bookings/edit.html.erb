@@ -1,0 +1,57 @@
+<h1>Edit Booking</h1>
+
+<%= form_with model: @booking, class: "team-form" do |f| %>
+  <input type="hidden" name="source" value="list">
+
+  <% if @booking.errors.any? %>
+    <div class="errors">
+      <h3><%= pluralize(@booking.errors.count, "error") %> prevented this booking from being saved:</h3>
+      <ul>
+        <% @booking.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :team_id, "Team" %>
+    <%= f.select :team_id, @teams.map { |t| [t.abbreviation.presence || t.name, t.id] },
+        { prompt: "Select a team..." }, required: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :lane %>
+    <%= f.number_field :lane, min: 0, max: 11, required: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :date %>
+    <%= f.date_field :date, required: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :start_time, "Start Time" %>
+    <%= f.time_field :start_time, required: true, step: 900 %>
+  </div>
+
+  <div class="field">
+    <%= f.label :end_time, "End Time" %>
+    <%= f.time_field :end_time, required: true, step: 900 %>
+  </div>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :phone %>
+    <%= f.telephone_field :phone %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Save", class: "btn btn-primary" %>
+    <%= link_to "Cancel", list_bookings_path, class: "btn" %>
+  </div>
+<% end %>

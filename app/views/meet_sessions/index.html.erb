@@ -5,6 +5,7 @@
 <table class="teams-table">
   <thead>
     <tr>
+      <th>Meet</th>
       <th>Name</th>
       <th>Date</th>
       <th>Start Time</th>
@@ -17,6 +18,7 @@
   <tbody>
     <% @meet_sessions.each do |session| %>
       <tr>
+        <td><%= session.meet&.name %></td>
         <td><%= session.name %></td>
         <td><%= session.date.strftime("%A, %B %d, %Y") %></td>
         <td><%= session.start_time.strftime("%l:%M %p").strip %></td>
