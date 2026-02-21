@@ -1,0 +1,36 @@
+<h1>Users (<%= @users.count %>)</h1>
+
+<div class="teams-toolbar">
+  <div class="teams-toolbar-left">
+    <%= link_to "New User", new_user_path, class: "btn btn-primary" %>
+  </div>
+</div>
+
+<table class="teams-table">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Created</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td>
+          <%= user.username %>
+          <% if user == current_user %>
+            <span class="current-user-badge">you</span>
+          <% end %>
+        </td>
+        <td><%= user.created_at.strftime("%b %-d, %Y") %></td>
+        <td class="actions-cell">
+          <% if user != current_user %>
+            <%= button_to "Delete", user_path(user), method: :delete, class: "btn btn-small btn-danger",
+                data: { turbo_confirm: "Delete user \"#{user.username}\"?" } %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

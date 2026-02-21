@@ -1,3 +1,9 @@
+# Default admin user (change password after first login)
+unless User.exists?(username: "admin")
+  User.create!(username: "admin", password: "lanetimers", password_confirmation: "lanetimers")
+  puts "Created default user: admin / lanetimers"
+end
+
 teams = [
   { name: "Thunderbolts", abbreviation: "THDR", color: "#e74c3c", coach: "Mike Johnson", address: "123 Main St", phone: "555-0101", email: "thunder@example.com" },
   { name: "Wave Riders", abbreviation: "WAVE", color: "#3498db", coach: "Sarah Chen", address: "456 Oak Ave", phone: "555-0102", email: "waves@example.com" },

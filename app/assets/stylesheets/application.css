@@ -457,6 +457,13 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
 .teams-toolbar-left {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
+}
+.import-form {
+  display: inline-block;
+}
+.import-form input[type="file"] {
+  display: none;
 }
 
 /* Search */
@@ -481,3 +488,116 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   border-radius: 8px;
   border: 1px solid var(--border);
 }
+
+/* Login page */
+.login-container {
+  max-width: 380px;
+  margin: 6rem auto;
+  background: var(--surface);
+  padding: 2.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.login-title {
+  text-align: center;
+  font-size: 1.75rem;
+  margin-bottom: 1.75rem;
+  color: var(--text);
+}
+.login-form .form-group {
+  margin-bottom: 1.25rem;
+}
+.login-form label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: var(--text);
+}
+.login-form .form-control {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--bg);
+  color: var(--text);
+}
+.login-form .form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(52,152,219,0.15);
+}
+.btn-full {
+  width: 100%;
+  padding: 0.65rem;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Generic form fields (used in user form, etc.) */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+.form-control {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--bg);
+  color: var(--text);
+}
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(52,152,219,0.15);
+}
+.form-hint {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-top: 0.25rem;
+}
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Current user badge */
+.current-user-badge {
+  display: inline-block;
+  background: var(--primary);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 10px;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+}
+
+/* Nav auth items */
+.nav-user {
+  color: rgba(255,255,255,0.6);
+  margin-left: 1.5rem;
+  font-size: 0.875rem;
+}
+.nav-logout {
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  margin-left: 0.75rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+.nav-logout:hover { color: white; }

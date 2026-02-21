@@ -9,7 +9,12 @@ module ActiveSupport
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
+  end
+end
 
-    # Add more helper methods to be used by all tests here...
+class ActionDispatch::IntegrationTest
+  # Log in as a fixture user. Default password matches the users.yml fixture.
+  def log_in_as(user, password: "password123")
+    post login_path, params: { username: user.username, password: password }
   end
 end
