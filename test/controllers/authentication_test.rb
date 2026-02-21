@@ -39,13 +39,13 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
 
   test "logout redirects to login page" do
     log_in_as users(:alice)
-    delete logout_path
+    get logout_path
     assert_redirected_to login_path
   end
 
   test "after logout, protected pages redirect to login" do
     log_in_as users(:alice)
-    delete logout_path
+    get logout_path
     get root_path
     assert_requires_login
   end
