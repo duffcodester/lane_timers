@@ -1,4 +1,4 @@
-# Lane Timers
+# Sage Timer
 
 A lane booking application built with Rails 8. Teams can reserve lanes in 1-hour time slots across a visual scheduling grid.
 

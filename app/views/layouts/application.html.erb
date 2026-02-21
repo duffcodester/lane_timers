@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Lane Timers" %></title>
+    <title><%= content_for(:title) || "Sage Timer" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Lane Timers">
+    <meta name="application-name" content="Sage Timer">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -26,7 +26,7 @@
   <body>
     <nav class="top-nav">
       <div class="nav-content">
-        <%= link_to "Lane Timers", root_path, class: "app-title" %>
+        <%= link_to "Sage Timer", root_path, class: "app-title" %>
         <div class="nav-links">
           <%= link_to "Schedule", root_path %>
           <%= link_to "Bookings", list_bookings_path %>

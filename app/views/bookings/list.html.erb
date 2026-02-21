@@ -87,18 +87,32 @@
     menu.style.display = menu.style.display === "none" ? "block" : "none";
   }
 
+  function submitWithFilterOpen() {
+    var form = document.getElementById("team-filter-form");
+    var input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "filter_open";
+    input.value = "1";
+    form.appendChild(input);
+    form.submit();
+  }
+
   function selectAllTeams() {
     document.querySelectorAll("#team-filter-form input[type='checkbox']").forEach(function(cb) {
       cb.checked = true;
     });
-    document.getElementById("team-filter-form").submit();
+    submitWithFilterOpen();
   }
 
   function selectNoneTeams() {
     document.querySelectorAll("#team-filter-form input[type='checkbox']").forEach(function(cb) {
       cb.checked = false;
     });
-    document.getElementById("team-filter-form").submit();
+    submitWithFilterOpen();
+  }
+
+  if (new URLSearchParams(window.location.search).get("filter_open") === "1") {
+    document.getElementById("team-filter-menu").style.display = "block";
   }
 
   document.addEventListener("click", function(e) {
