@@ -12,14 +12,14 @@ class TeamsController < ApplicationController
     "misc_expense" => "teams.misc_expense"
   }.freeze
 
+  PER_PAGE = 10
+
   def index
-    @teams = Team.left_joins(:bookings)
-                 .select("teams.*, COALESCE(SUM(EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0), 0) AS total_hours")
-                 .group("teams.id")
+    base = Team.all
 
     if params[:search].present?
       q = "%#{params[:search]}%"
-      @teams = @teams.where(
+      base = base.where(
         "teams.name ILIKE :q OR teams.abbreviation ILIKE :q OR teams.coach ILIKE :q OR teams.address ILIKE :q OR teams.phone ILIKE :q OR teams.email ILIKE :q",
         q: q
       )
@@ -27,11 +27,21 @@ class TeamsController < ApplicationController
 
     @sort_column = SORTABLE_COLUMNS[params[:sort]] ? params[:sort] : "name"
     @sort_direction = params[:direction] == "desc" ? "desc" : "asc"
+    order_sql = "#{SORTABLE_COLUMNS[@sort_column]} #{@sort_direction}"
 
     columns_json = Setting.get("teams_columns")
     @column_prefs = columns_json ? JSON.parse(columns_json) : {}
-    order_sql = "#{SORTABLE_COLUMNS[@sort_column]} #{@sort_direction}"
-    @teams = @teams.order(Arel.sql(order_sql))
+
+    @total_count = base.count
+    @current_page = [params[:page].to_i, 1].max
+    @total_pages = [(@total_count.to_f / PER_PAGE).ceil, 1].max
+
+    @teams = base.left_joins(:bookings)
+                 .select("teams.*, COALESCE(SUM(EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0), 0) AS total_hours")
+                 .group("teams.id")
+                 .order(Arel.sql(order_sql))
+                 .limit(PER_PAGE)
+                 .offset((@current_page - 1) * PER_PAGE)
   end
 
   def export
@@ -82,6 +92,52 @@ class TeamsController < ApplicationController
     send_data package.to_stream.read,
       filename: "lane_timers_export_#{Time.current.strftime('%Y-%m-%d_%H%M%S')}.xlsx",
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  end
+
+  def import
+    file = params[:file]
+    unless file
+      redirect_to teams_path, alert: "Please select a CSV file."
+      return
+    end
+
+    require "csv"
+    created = 0
+    updated = 0
+    errors = []
+    content = File.read(file.path).sub(/\A\xEF\xBB\xBF/, "")
+    CSV.parse(content, headers: true, header_converters: :downcase) do |row|
+      name = row["name"].presence
+      next unless name
+
+      attrs = {
+        name: name,
+        abbreviation: (row["abbreviation"] || row["abbr"]).presence,
+        color: (row["color"]).presence || "#3498db",
+        coach: (row["coach"] || row["coach name(s)"] || row["coach names"]).presence,
+        address: row["address"].presence,
+        phone: row["phone"].presence,
+        email: row["email"].presence,
+        misc_expense: (row["misc_expense"] || row["misc expense"]).presence
+      }.compact
+
+      team = Team.find_by(name: name)
+      if team
+        team.update(attrs)
+        updated += 1
+      else
+        if Team.create(attrs).persisted?
+          created += 1
+        else
+          errors << name
+        end
+      end
+    end
+
+    msg = "Imported #{created} new team(s)."
+    msg += " Updated #{updated} existing team(s)." if updated > 0
+    msg += " Failed: #{errors.join(', ')}." if errors.any?
+    redirect_to teams_path, notice: msg
   end
 
   def new

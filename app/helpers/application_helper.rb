@@ -12,6 +12,6 @@ module ApplicationHelper
         indicator = " \u25B2"
       end
     end
-    link_to "#{label}#{indicator}".html_safe, teams_path(sort: column, direction: direction, search: params[:search]), class: "sort-link"
+    link_to "#{label}#{indicator}".html_safe, teams_path(sort: column, direction: direction, search: params[:search], page: 1), class: "sort-link"
   end
 end

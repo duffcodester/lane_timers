@@ -1,8 +1,16 @@
 class MeetSessionsController < ApplicationController
   before_action :set_meet_session, only: [:edit, :update, :destroy, :duplicate]
 
+  PER_PAGE = 10
+
   def index
+    @total_count = MeetSession.count
+    @current_page = [params[:page].to_i, 1].max
+    @total_pages = [(@total_count.to_f / PER_PAGE).ceil, 1].max
+
     @meet_sessions = MeetSession.order(:date, :start_time)
+                                .limit(PER_PAGE)
+                                .offset((@current_page - 1) * PER_PAGE)
   end
 
   def new

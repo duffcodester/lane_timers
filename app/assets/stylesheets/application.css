@@ -489,6 +489,42 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   border: 1px solid var(--border);
 }
 
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+.page-link {
+  display: inline-block;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  min-width: 2rem;
+  text-align: center;
+}
+.page-link:hover { background: var(--bg); }
+.page-link-current {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+.page-link-disabled {
+  color: var(--text-light);
+  cursor: default;
+}
+.page-ellipsis {
+  padding: 0.35rem 0.25rem;
+  color: var(--text-light);
+  font-size: 0.875rem;
+}
+
 /* Login page */
 .login-container {
   max-width: 380px;

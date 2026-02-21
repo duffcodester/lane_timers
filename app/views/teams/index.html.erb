@@ -1,4 +1,4 @@
-<h1>Teams (<%= @teams.length %>)</h1>
+<h1>Teams (<%= @total_count %>)</h1>
 
 <% all_columns = %w[color name abbreviation coach address phone email hours misc_expense actions] %>
 
@@ -6,6 +6,10 @@
   <div class="teams-toolbar-left">
     <%= link_to "New Team", new_team_path, class: "btn btn-primary" %>
     <%= link_to "Export to Excel", export_teams_path, class: "btn" %>
+    <%= form_tag import_teams_path, multipart: true, class: "import-form" do %>
+      <%= file_field_tag :file, accept: ".csv", onchange: "this.form.submit()" %>
+      <label for="file" class="btn">Import CSV</label>
+    <% end %>
     <div class="columns-dropdown">
       <button type="button" class="btn" onclick="toggleColumnsMenu()">Columns</button>
       <div id="columns-menu" class="columns-menu" style="display:none">
@@ -103,3 +107,5 @@
     }
   });
 </script>
+
+<%= render "shared/pagination", current_page: @current_page, total_pages: @total_pages %>

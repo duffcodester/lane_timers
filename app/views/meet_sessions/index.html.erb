@@ -1,4 +1,4 @@
-<h1>Sessions (<%= @meet_sessions.length %>)</h1>
+<h1>Sessions (<%= @total_count %>)</h1>
 
 <%= link_to "New Session", new_meet_session_path, class: "btn btn-primary" %>
 
@@ -33,3 +33,5 @@
     <% end %>
   </tbody>
 </table>
+
+<%= render "shared/pagination", current_page: @current_page, total_pages: @total_pages %>
