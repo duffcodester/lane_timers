@@ -23,6 +23,9 @@ Rails.application.routes.draw do
   resources :users, only: [:index, :new, :create, :destroy]
   resources :meets
 
+  get   "user/edit", to: "user#edit",   as: :edit_current_user
+  patch "user/edit", to: "user#update", as: :update_current_user
+
   patch "settings/teams_columns", to: "settings#update_teams_columns", as: :teams_columns_setting
 
   root "bookings#index"

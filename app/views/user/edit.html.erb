@@ -1,0 +1,33 @@
+<% content_for :title, "Account – Sage Timer" %>
+
+<h1>Account — <%= current_user.username %></h1>
+
+<div class="form-card">
+  <%= form_with url: update_current_user_path, method: :patch do |f| %>
+    <% if alert %>
+      <div class="flash flash-alert"><%= alert %></div>
+    <% end %>
+
+    <div class="field">
+      <%= label_tag :username, "Username" %>
+      <%= text_field_tag :username, params[:username] || current_user.username, autocomplete: "username", class: "form-control", autofocus: true %>
+      <span class="form-hint">Letters, numbers, and underscores only</span>
+    </div>
+
+    <div class="field">
+      <%= label_tag :password, "New Password" %>
+      <%= password_field_tag :password, nil, autocomplete: "new-password", class: "form-control" %>
+      <span class="form-hint">Leave blank to keep current password. Minimum 8 characters.</span>
+    </div>
+
+    <div class="field">
+      <%= label_tag :password_confirmation, "Confirm New Password" %>
+      <%= password_field_tag :password_confirmation, nil, autocomplete: "new-password", class: "form-control" %>
+    </div>
+
+    <div class="form-actions">
+      <%= f.submit "Save", class: "btn btn-primary" %>
+      <%= link_to "Cancel", users_path, class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+</div>

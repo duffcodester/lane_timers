@@ -11,6 +11,7 @@
     <tr>
       <th>Username</th>
       <th>Created</th>
+      <th>Last Seen</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -24,6 +25,13 @@
           <% end %>
         </td>
         <td><%= user.created_at.strftime("%b %-d, %Y") %></td>
+        <td>
+          <% if user.last_seen_at %>
+            <span class="local-time" data-utc="<%= user.last_seen_at.iso8601 %>"></span>
+          <% else %>
+            —
+          <% end %>
+        </td>
         <td class="actions-cell">
           <% if user != current_user %>
             <%= button_to "Delete", user_path(user), method: :delete, class: "btn btn-small btn-danger",
@@ -34,3 +42,13 @@
     <% end %>
   </tbody>
 </table>
+
+<script>
+  document.querySelectorAll(".local-time").forEach(function(el) {
+    var d = new Date(el.dataset.utc);
+    el.textContent = d.toLocaleString(undefined, {
+      month: "short", day: "numeric", year: "numeric",
+      hour: "numeric", minute: "2-digit"
+    });
+  });
+</script>

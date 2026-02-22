@@ -28,14 +28,14 @@
       <div class="nav-content">
         <%= link_to "Sage Timer", root_path, class: "app-title" %>
         <div class="nav-links">
-          <%= link_to "Schedule", root_path %>
+          <%= link_to "Dashboard", root_path %>
           <%= link_to "Bookings", list_bookings_path %>
           <%= link_to "Teams", teams_path %>
           <%= link_to "Meets", meets_path %>
           <%= link_to "Sessions", meet_sessions_path %>
           <%= link_to "Users", users_path %>
           <% if logged_in? %>
-            <span class="nav-user"><%= current_user.username %></span>
+            <%= link_to current_user.username, edit_current_user_path, class: "nav-user" %>
             <%= link_to "Log Out", logout_path, class: "nav-logout" %>
           <% end %>
         </div>

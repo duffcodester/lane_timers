@@ -644,8 +644,18 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
 /* Nav auth items */
 .nav-user {
   color: rgba(255,255,255,0.6);
+  text-decoration: none;
   margin-left: 1.5rem;
   font-size: 0.875rem;
+}
+.nav-user:hover { color: white; }
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 420px;
+  margin-top: 1.5rem;
 }
 .nav-logout {
   color: rgba(255,255,255,0.8);
