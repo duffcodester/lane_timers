@@ -91,6 +91,8 @@
                       data-booking-phone="<%= booking.phone %>"
                       data-booking-start-time="<%= booking.start_time.strftime('%H:%M') %>"
                       data-booking-end-time="<%= booking.end_time.strftime('%H:%M') %>"
+                      data-booking-notes="<%= booking.notes %>"
+                      data-booking-community-service="<%= booking.community_service %>"
                       data-action="dragstart->drag#dragstart dragend->drag#dragend"
                       onclick="openEditForm(event, this)"
                       style="background-color: <%= booking.team.color %>20; border-left: 4px solid <%= booking.team.color %>">
@@ -183,6 +185,17 @@
           </select>
         </div>
 
+        <div class="field">
+          <label for="booking-notes">Notes</label>
+          <textarea name="booking[notes]" id="booking-notes" rows="2"></textarea>
+        </div>
+
+        <div class="field field-checkbox">
+          <input type="checkbox" name="booking[community_service]" id="booking-community-service" value="1">
+          <input type="hidden" name="booking[community_service]" value="0">
+          <label for="booking-community-service">Community Service</label>
+        </div>
+
         <div class="actions">
           <%= f.submit "Book", class: "btn btn-primary" %>
           <button type="button" class="btn" onclick="closeBookingForm()">Cancel</button>
@@ -218,6 +231,17 @@
           <input type="tel" name="booking[phone]" id="edit-phone">
         </div>
 
+        <div class="field">
+          <label for="edit-notes">Notes</label>
+          <textarea name="booking[notes]" id="edit-notes" rows="2"></textarea>
+        </div>
+
+        <div class="field field-checkbox">
+          <input type="checkbox" name="booking[community_service]" id="edit-community-service" value="1">
+          <input type="hidden" name="booking[community_service]" value="0">
+          <label for="edit-community-service">Community Service</label>
+        </div>
+
         <div class="actions">
           <button type="submit" class="btn btn-primary">Save</button>
           <button type="button" class="btn" onclick="closeEditForm()">Cancel</button>
@@ -242,6 +266,8 @@
     document.getElementById("booking-start-time").value =
       hour.padStart(2, '0') + ":" + min.padStart(2, '0');
     document.getElementById("booking-duration").value = "60";
+    document.getElementById("booking-notes").value = "";
+    document.getElementById("booking-community-service").checked = false;
     updateEndTime();
     document.getElementById("booking-info").textContent =
       "Lane " + lane + " at " + formatTime(parseInt(hour), parseInt(min));
@@ -282,12 +308,16 @@
     var phone = cell.dataset.bookingPhone || "";
     var startTime = cell.dataset.bookingStartTime || "";
     var endTime = cell.dataset.bookingEndTime || "";
+    var notes = cell.dataset.bookingNotes || "";
+    var communityService = cell.dataset.bookingCommunityService === "true";
 
     document.getElementById("edit-form").action = "/bookings/" + bookingId;
     document.getElementById("edit-start-time").value = startTime;
     document.getElementById("edit-name").value = name;
     document.getElementById("edit-phone").value = phone;
     document.getElementById("edit-end-time").value = endTime;
+    document.getElementById("edit-notes").value = notes;
+    document.getElementById("edit-community-service").checked = communityService;
     document.getElementById("edit-modal").style.display = "flex";
   }
 

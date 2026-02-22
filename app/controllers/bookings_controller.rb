@@ -190,10 +190,10 @@ class BookingsController < ApplicationController
   private
 
   def booking_params
-    params.require(:booking).permit(:team_id, :lane, :date, :start_time, :end_time, :name, :phone)
+    params.require(:booking).permit(:team_id, :lane, :date, :start_time, :end_time, :name, :phone, :notes, :community_service)
   end
 
   def booking_edit_params
-    params.require(:booking).permit(:team_id, :lane, :date, :start_time, :end_time, :name, :phone)
+    params.require(:booking).permit(:team_id, :lane, :date, :start_time, :end_time, :name, :phone, :notes, :community_service)
   end
 end

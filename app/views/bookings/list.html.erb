@@ -53,6 +53,8 @@
       <th><%= bookings_sort_link "Hours",      "hours" %></th>
       <th><%= bookings_sort_link "Name",       "name" %></th>
       <th><%= bookings_sort_link "Phone",      "phone" %></th>
+      <th>Notes</th>
+      <th>Comm. Service</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -70,6 +72,8 @@
         <td><%= "%.2f" % booking.hours.to_f %></td>
         <td><%= booking.name %></td>
         <td><%= booking.formatted_phone %></td>
+        <td><%= booking.notes %></td>
+        <td><%= booking.community_service? ? "Yes" : "" %></td>
         <td class="actions-cell">
           <%= link_to "Edit", edit_booking_path(booking), class: "btn btn-small" %>
           <%= button_to "Delete", booking_path(booking), method: :delete,

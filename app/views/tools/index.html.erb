@@ -1,0 +1,46 @@
+<% content_for :title, "Tools – Sage Timer" %>
+
+<h1>Tools</h1>
+
+<div class="tools-page">
+
+  <section class="tools-section">
+    <h2>Info</h2>
+    <div class="tools-content">
+      <p>Welcome to the Sage Timer tools page. Add information, links, FAQs, and downloadable files here.</p>
+    </div>
+  </section>
+
+  <section class="tools-section">
+    <h2>Links</h2>
+    <ul class="tools-list">
+      <%# Add links here, e.g.: %>
+      <%# <li><a href="https://example.com">Example</a></li> %>
+      <li><em>No links added yet.</em></li>
+    </ul>
+  </section>
+
+  <section class="tools-section">
+    <h2>FAQs</h2>
+    <div class="tools-faqs">
+      <%# Add FAQ items here %>
+      <p><em>No FAQs added yet.</em></p>
+    </div>
+  </section>
+
+  <section class="tools-section">
+    <h2>Files</h2>
+    <% if @files.any? %>
+      <ul class="tools-list tools-files">
+        <% @files.each do |filename| %>
+          <li>
+            <%= link_to filename, "/tools/#{filename}" %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p><em>No files available. Place files in <code>public/tools/</code> to make them available here.</em></p>
+    <% end %>
+  </section>
+
+</div>

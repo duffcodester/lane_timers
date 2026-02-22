@@ -359,6 +359,17 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
 .field {
   margin-bottom: 1rem;
 }
+.field-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.field-checkbox label {
+  display: inline;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0;
+}
 .field label {
   display: block;
   font-weight: 600;
@@ -676,3 +687,34 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   font-size: 0.875rem;
 }
 .nav-logout:hover { color: white; }
+.nav-tools {
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  margin-left: 1.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+.nav-tools:hover { color: white; }
+
+/* Tools page */
+.tools-page { max-width: 800px; }
+.tools-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.tools-section h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.tools-list { padding-left: 1.25rem; }
+.tools-list li { margin-bottom: 0.4rem; }
+.tools-files li { list-style: none; margin-left: -1.25rem; }
+.tools-files a { font-weight: 500; }
+.tools-faqs { display: flex; flex-direction: column; gap: 1rem; }
+.tools-content p, .tools-faqs p { color: var(--text); line-height: 1.6; }

@@ -28,6 +28,8 @@ Rails.application.routes.draw do
 
   patch "settings/teams_columns", to: "settings#update_teams_columns", as: :teams_columns_setting
 
+  get "tools", to: "tools#index", as: :tools
+
   root "bookings#index"
 
   get "up" => "rails/health#show", as: :rails_health_check
