@@ -480,6 +480,8 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
 .import-form {
   display: inline-block;
 }
+.search-form { display: flex; }
+.search-input { width: 220px; }
 .import-form input[type="file"] {
   display: none;
 }

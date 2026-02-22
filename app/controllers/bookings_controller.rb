@@ -21,6 +21,15 @@ class BookingsController < ApplicationController
                    .select("bookings.*, teams.name AS team_name, teams.abbreviation AS team_abbreviation, teams.color AS team_color, EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0 AS hours")
                    .order(Arel.sql(order_sql))
 
+    @search = params[:search].to_s.strip
+    if @search.present?
+      pattern = "%#{@search}%"
+      scope = scope.where(
+        "teams.abbreviation ILIKE :q OR teams.name ILIKE :q OR bookings.name ILIKE :q OR bookings.phone ILIKE :q",
+        q: pattern
+      )
+    end
+
     @teams = Team.order(:name)
 
     # filter_active distinguishes "no filter applied" from "no teams selected"
@@ -33,6 +42,13 @@ class BookingsController < ApplicationController
     end
 
     count_scope = Booking.joins(:team)
+    if @search.present?
+      pattern = "%#{@search}%"
+      count_scope = count_scope.where(
+        "teams.abbreviation ILIKE :q OR teams.name ILIKE :q OR bookings.name ILIKE :q OR bookings.phone ILIKE :q",
+        q: pattern
+      )
+    end
     if params[:filter_active].present?
       count_scope = @selected_team_ids.any? ? count_scope.where(team_id: @selected_team_ids) : count_scope.none
     end

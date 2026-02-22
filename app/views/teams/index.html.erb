@@ -1,6 +1,6 @@
 <h1>Teams (<%= @total_count %>)</h1>
 
-<% all_columns = %w[name abbreviation coach address phone email hours misc_expense actions] %>
+<% all_columns = %w[name abbreviation coach hours booked address phone email misc_expense actions] %>
 
 <div class="teams-toolbar">
   <div class="teams-toolbar-left">
@@ -13,8 +13,8 @@
     <div class="columns-dropdown">
       <button type="button" class="btn" onclick="toggleColumnsMenu()">Columns</button>
       <div id="columns-menu" class="columns-menu" style="display:none">
-        <% { "name" => "Name", "abbreviation" => "Abbr", "coach" => "Coach",
-             "address" => "Address", "phone" => "Phone", "email" => "Email", "hours" => "Hours",
+        <% { "name" => "Name", "abbreviation" => "Abbr", "coach" => "Coach", "hours" => "Forecast", "booked" => "Booked",
+             "address" => "Address", "phone" => "Phone", "email" => "Email",
              "misc_expense" => "Misc Expense", "actions" => "Actions" }.each do |col, label| %>
           <% visible = @column_prefs.empty? || @column_prefs[col] != false %>
           <label><input type="checkbox" data-col="<%= col %>" <%= "checked" if visible %> onchange="toggleColumn('<%= col %>')"> <%= label %></label>
@@ -38,10 +38,11 @@
       <th data-col="name" <%= 'style="display:none"'.html_safe if hidden.include?("name") %>><%= sort_link "Name", "name" %></th>
       <th data-col="abbreviation" <%= 'style="display:none"'.html_safe if hidden.include?("abbreviation") %>><%= sort_link "Abbr", "abbreviation" %></th>
       <th data-col="coach" <%= 'style="display:none"'.html_safe if hidden.include?("coach") %>><%= sort_link "Coach Name(s)", "coach" %></th>
+      <th data-col="hours" <%= 'style="display:none"'.html_safe if hidden.include?("hours") %>><%= sort_link "Forecast", "hours" %></th>
+      <th data-col="booked" <%= 'style="display:none"'.html_safe if hidden.include?("booked") %>><%= sort_link "Booked", "booked" %></th>
       <th data-col="address" <%= 'style="display:none"'.html_safe if hidden.include?("address") %>><%= sort_link "Address", "address" %></th>
       <th data-col="phone" <%= 'style="display:none"'.html_safe if hidden.include?("phone") %>><%= sort_link "Phone", "phone" %></th>
       <th data-col="email" <%= 'style="display:none"'.html_safe if hidden.include?("email") %>><%= sort_link "Email", "email" %></th>
-      <th data-col="hours" <%= 'style="display:none"'.html_safe if hidden.include?("hours") %>><%= sort_link "Hours", "hours" %></th>
       <th data-col="misc_expense" <%= 'style="display:none"'.html_safe if hidden.include?("misc_expense") %>><%= sort_link "Misc Expense", "misc_expense" %></th>
       <th data-col="actions" <%= 'style="display:none"'.html_safe if hidden.include?("actions") %>>Actions</th>
     </tr>
@@ -55,10 +56,11 @@
         </td>
         <td data-col="abbreviation" <%= 'style="display:none"'.html_safe if hidden.include?("abbreviation") %>><%= team.abbreviation %></td>
         <td data-col="coach" <%= 'style="display:none"'.html_safe if hidden.include?("coach") %>><%= team.coach %></td>
+        <td data-col="hours" <%= 'style="display:none"'.html_safe if hidden.include?("hours") %>><%= "%.2f" % team.total_hours.to_f %></td>
+        <td data-col="booked" <%= 'style="display:none"'.html_safe if hidden.include?("booked") %>><%= "%.2f" % team.booked_hours.to_f %></td>
         <td data-col="address" <%= 'style="display:none"'.html_safe if hidden.include?("address") %>><%= team.address %></td>
         <td data-col="phone" <%= 'style="display:none"'.html_safe if hidden.include?("phone") %>><%= team.phone %></td>
         <td data-col="email" <%= 'style="display:none"'.html_safe if hidden.include?("email") %>><%= team.email %></td>
-        <td data-col="hours" <%= 'style="display:none"'.html_safe if hidden.include?("hours") %>><%= "%.2f" % team.total_hours.to_f %></td>
         <td data-col="misc_expense" <%= 'style="display:none"'.html_safe if hidden.include?("misc_expense") %>><%= number_to_currency(team.misc_expense) %></td>
         <td data-col="actions" class="actions-cell" <%= 'style="display:none"'.html_safe if hidden.include?("actions") %>>
           <%= link_to "Edit", edit_team_path(team), class: "btn btn-small" %>

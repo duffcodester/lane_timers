@@ -9,6 +9,7 @@ module ApplicationHelper
     url_params = { sort: column, direction: direction, page: 1 }
     url_params[:filter_active] = 1                     if params[:filter_active].present?
     url_params[:team_ids]      = params[:team_ids]     if params[:team_ids].present?
+    url_params[:search]        = params[:search]       if params[:search].present?
     link_to "#{label}#{indicator}".html_safe,
             list_bookings_path(url_params),
             class: "sort-link"

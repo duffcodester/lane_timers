@@ -9,6 +9,7 @@ class TeamsController < ApplicationController
     "phone" => "teams.phone",
     "email" => "teams.email",
     "hours" => "total_hours",
+    "booked" => "booked_hours",
     "misc_expense" => "teams.misc_expense"
   }.freeze
 
@@ -37,7 +38,7 @@ class TeamsController < ApplicationController
     @total_pages = [(@total_count.to_f / PER_PAGE).ceil, 1].max
 
     @teams = base.left_joins(:bookings)
-                 .select("teams.*, COALESCE(SUM(EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0), 0) AS total_hours")
+                 .select("teams.*, COALESCE(SUM(EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0), 0) AS total_hours, COALESCE(SUM(CASE WHEN bookings.name IS NOT NULL AND bookings.name != '' THEN EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0 ELSE 0 END), 0) AS booked_hours")
                  .group("teams.id")
                  .order(Arel.sql(order_sql))
                  .limit(PER_PAGE)
