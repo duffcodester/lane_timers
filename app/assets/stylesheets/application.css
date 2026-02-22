@@ -120,6 +120,15 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   border: 1px solid var(--border);
   border-radius: 8px;
   display: inline-block;
+  position: relative;
+}
+#current-time-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: #e74c3c;
+  pointer-events: none;
+  z-index: 10;
 }
 
 .schedule-grid {

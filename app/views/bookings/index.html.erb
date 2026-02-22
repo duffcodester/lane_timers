@@ -51,7 +51,7 @@
 <% elsif @teams.empty? %>
   <p class="empty-state">No teams created yet. <%= link_to "Create teams", teams_path %> first.</p>
 <% else %>
-  <div class="grid-wrapper" data-controller="drag resize">
+  <div class="grid-wrapper" data-controller="drag resize" data-schedule-date="<%= @date.iso8601 %>">
     <table class="schedule-grid">
       <thead>
         <tr>
@@ -64,7 +64,7 @@
       </thead>
       <tbody>
         <% @time_slots.each do |hour, min| %>
-          <tr class="<%= min == 0 ? 'hour-row' : '' %>">
+          <tr class="<%= min == 0 ? 'hour-row' : '' %>" data-hour="<%= hour %>" data-min="<%= min %>">
             <% if @session_starts[[hour, min]] %>
               <% ss = @session_starts[[hour, min]] %>
               <td class="session-cell<%= ' session-closed' if ss[:closed] %><%= ' session-break' if ss[:break_period] %>" rowspan="<%= ss[:slots] %>">
@@ -394,4 +394,52 @@
   });
 
   loadTeamFilter();
+
+  // ── Current time line ────────────────────────────────────────────────────
+  function updateCurrentTimeLine() {
+    var grid = document.querySelector(".grid-wrapper");
+    if (!grid) return;
+
+    var scheduleDate = grid.dataset.scheduleDate;
+    var today = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD in local time
+    if (scheduleDate !== today) return;
+
+    var now = new Date();
+    var nowMinutes = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+
+    var rows = document.querySelectorAll(".schedule-grid tbody tr[data-hour]");
+    var gridRect = grid.getBoundingClientRect();
+    var prevRow = null, nextRow = null, prevMin = -1, nextMin = -1;
+
+    rows.forEach(function(row) {
+      var rowMin = parseInt(row.dataset.hour) * 60 + parseInt(row.dataset.min);
+      if (rowMin <= nowMinutes) { prevRow = row; prevMin = rowMin; }
+      else if (!nextRow) { nextRow = row; nextMin = rowMin; }
+    });
+
+    var line = document.getElementById("current-time-line");
+    if (!line) {
+      line = document.createElement("div");
+      line.id = "current-time-line";
+      grid.appendChild(line);
+    }
+
+    if (!prevRow) { line.style.display = "none"; return; }
+
+    var top;
+    var prevRect = prevRow.getBoundingClientRect();
+    if (nextRow) {
+      var nextRect = nextRow.getBoundingClientRect();
+      var fraction = (nowMinutes - prevMin) / (nextMin - prevMin);
+      top = prevRect.top + fraction * (nextRect.top - prevRect.top) - gridRect.top;
+    } else {
+      top = prevRect.bottom - gridRect.top;
+    }
+
+    line.style.top = Math.round(top) + "px";
+    line.style.display = "block";
+  }
+
+  updateCurrentTimeLine();
+  setInterval(updateCurrentTimeLine, 60000);
 </script>
