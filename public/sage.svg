@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 340" width="300" height="340">
+  <!-- Stems -->
+  <g stroke="#7a9a6a" stroke-linecap="round" fill="none">
+    <!-- Main center stem -->
+    <path d="M150 320 Q148 280 145 240 Q142 200 148 160 Q152 130 150 100" stroke-width="4"/>
+    <!-- Left stem -->
+    <path d="M148 240 Q130 220 115 195 Q100 170 98 145" stroke-width="3"/>
+    <!-- Right stem -->
+    <path d="M145 220 Q162 200 172 178 Q182 155 180 130" stroke-width="3"/>
+    <!-- Far left stem -->
+    <path d="M115 195 Q100 175 88 155 Q78 135 80 110" stroke-width="2.5"/>
+    <!-- Far right stem -->
+    <path d="M172 178 Q185 158 192 138 Q198 118 196 95" stroke-width="2.5"/>
+    <!-- Extra branch left -->
+    <path d="M130 165 Q118 148 112 128 Q108 112 110 90" stroke-width="2"/>
+  </g>
+
+  <!-- Leaves (gray-green, oval) -->
+  <g fill="#9ab88a" opacity="0.85">
+    <ellipse cx="138" cy="275" rx="14" ry="7" transform="rotate(-30 138 275)"/>
+    <ellipse cx="155" cy="260" rx="13" ry="6" transform="rotate(25 155 260)"/>
+    <ellipse cx="140" cy="235" rx="13" ry="6" transform="rotate(-20 140 235)"/>
+    <ellipse cx="158" cy="220" rx="12" ry="5" transform="rotate(30 158 220)"/>
+    <ellipse cx="108" cy="178" rx="12" ry="5" transform="rotate(-40 108 178)"/>
+    <ellipse cx="124" cy="168" rx="11" ry="5" transform="rotate(15 124 168)"/>
+    <ellipse cx="170" cy="162" rx="12" ry="5" transform="rotate(35 170 162)"/>
+    <ellipse cx="183" cy="150" rx="11" ry="5" transform="rotate(45 183 150)"/>
+    <ellipse cx="88" cy="148" rx="11" ry="5" transform="rotate(-45 88 148)"/>
+    <ellipse cx="102" cy="135" rx="11" ry="5" transform="rotate(-20 102 135)"/>
+    <ellipse cx="144" cy="175" rx="12" ry="5" transform="rotate(-10 144 175)"/>
+    <ellipse cx="152" cy="148" rx="11" ry="5" transform="rotate(20 152 148)"/>
+  </g>
+
+  <!-- Purple flowers — whorls of small tubular blossoms -->
+  <!-- Center stem flowers -->
+  <g fill="#7b5ea7">
+    <!-- Top of center stem -->
+    <ellipse cx="150" cy="98" rx="5" ry="8"/>
+    <ellipse cx="143" cy="104" rx="4" ry="7"/>
+    <ellipse cx="157" cy="104" rx="4" ry="7"/>
+    <ellipse cx="148" cy="115" rx="4" ry="7"/>
+    <ellipse cx="155" cy="112" rx="4" ry="7"/>
+    <!-- Mid center -->
+    <ellipse cx="150" cy="128" rx="4" ry="6"/>
+    <ellipse cx="143" cy="133" rx="3.5" ry="6"/>
+    <ellipse cx="157" cy="133" rx="3.5" ry="6"/>
+  </g>
+
+  <!-- Left branch flowers -->
+  <g fill="#8b6db5">
+    <ellipse cx="80" cy="108" rx="4" ry="7"/>
+    <ellipse cx="73" cy="115" rx="3.5" ry="6"/>
+    <ellipse cx="87" cy="115" rx="3.5" ry="6"/>
+    <ellipse cx="80" cy="126" rx="3.5" ry="6"/>
+    <ellipse cx="98" cy="142" rx="4" ry="6"/>
+    <ellipse cx="92" cy="148" rx="3.5" ry="6"/>
+    <ellipse cx="104" cy="149" rx="3.5" ry="6"/>
+    <ellipse cx="110" cy="126" rx="3.5" ry="6"/>
+    <ellipse cx="104" cy="119" rx="4" ry="7"/>
+    <ellipse cx="116" cy="119" rx="3.5" ry="6"/>
+  </g>
+
+  <!-- Right branch flowers -->
+  <g fill="#9370c0">
+    <ellipse cx="196" cy="93" rx="4" ry="7"/>
+    <ellipse cx="189" cy="100" rx="3.5" ry="6"/>
+    <ellipse cx="202" cy="100" rx="3.5" ry="6"/>
+    <ellipse cx="196" cy="112" rx="3.5" ry="6"/>
+    <ellipse cx="180" cy="127" rx="4" ry="6"/>
+    <ellipse cx="174" cy="134" rx="3.5" ry="6"/>
+    <ellipse cx="186" cy="134" rx="3.5" ry="6"/>
+    <ellipse cx="180" cy="145" rx="3.5" ry="6"/>
+  </g>
+
+  <!-- Flower calyxes (small green cups at base of flowers) -->
+  <g fill="#6a8c5a" opacity="0.7">
+    <ellipse cx="150" cy="105" rx="3" ry="2"/>
+    <ellipse cx="80" cy="114" rx="2.5" ry="2"/>
+    <ellipse cx="110" cy="124" rx="2.5" ry="2"/>
+    <ellipse cx="196" cy="100" rx="2.5" ry="2"/>
+    <ellipse cx="180" cy="133" rx="2.5" ry="2"/>
+    <ellipse cx="150" cy="136" rx="2.5" ry="2"/>
+    <ellipse cx="98" cy="146" rx="2.5" ry="2"/>
+  </g>
+
+  <!-- Highlight dots on flowers for depth -->
+  <g fill="#c9aee0" opacity="0.5">
+    <circle cx="150" cy="95" r="2"/>
+    <circle cx="80" cy="106" r="1.5"/>
+    <circle cx="196" cy="91" r="1.5"/>
+    <circle cx="104" cy="117" r="1.5"/>
+    <circle cx="180" cy="125" r="1.5"/>
+  </g>
+</svg>
