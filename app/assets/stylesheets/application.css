@@ -116,11 +116,12 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
 
 /* Schedule Grid */
 .grid-wrapper {
-  overflow-x: auto;
+  overflow: auto;
   border: 1px solid var(--border);
   border-radius: 8px;
   display: inline-block;
   position: relative;
+  max-height: calc(100vh - 180px);
 }
 #current-time-line {
   position: absolute;
@@ -128,7 +129,7 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   height: 2px;
   background: #e74c3c;
   pointer-events: none;
-  z-index: 10;
+  z-index: 20;
 }
 
 .schedule-grid {
@@ -803,5 +804,70 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   .schedule-grid th.time-col {
     z-index: 11;
     box-shadow: 2px 0 4px rgba(0,0,0,0.15);
+  }
+
+  /* Container */
+  .container {
+    padding: 1rem;
+  }
+  h1 {
+    font-size: 1.2rem;
+  }
+
+  /* Toolbars stack vertically */
+  .teams-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .teams-toolbar-left {
+    flex-wrap: wrap;
+  }
+  .date-picker {
+    gap: 0.5rem;
+  }
+
+  /* Search inputs fill available width */
+  .search-form {
+    width: 100%;
+  }
+  .search-input {
+    width: 100% !important;
+    min-width: 0;
+  }
+
+  /* Tables scroll horizontally */
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-scroll .teams-table {
+    border-radius: 0;
+  }
+  .teams-table th,
+  .teams-table td {
+    padding: 0.5rem 0.75rem;
+    white-space: nowrap;
+  }
+  .actions-cell {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  /* Forms take full width */
+  .team-form,
+  .form-card {
+    max-width: 100%;
+  }
+
+  /* Modals fit mobile screens */
+  .modal-content {
+    min-width: auto;
+    max-width: calc(100vw - 2rem);
+    margin: 1rem;
+  }
+
+  /* Tools page */
+  .tools-page {
+    max-width: 100%;
   }
 }

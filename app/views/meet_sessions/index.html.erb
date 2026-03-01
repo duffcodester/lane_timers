@@ -2,6 +2,7 @@
 
 <%= link_to "New Session", new_meet_session_path, class: "btn btn-primary" %>
 
+<div class="table-scroll">
 <table class="teams-table">
   <thead>
     <tr>
@@ -35,5 +36,6 @@
     <% end %>
   </tbody>
 </table>
+</div>
 
 <%= render "shared/pagination", current_page: @current_page, total_pages: @total_pages %>
