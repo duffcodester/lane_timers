@@ -55,5 +55,15 @@
 
       <%= yield %>
     </main>
+    <script>
+      function togglePassword(btn) {
+        var input = btn.parentElement.querySelector("input");
+        var isPassword = input.type === "password";
+        input.type = isPassword ? "text" : "password";
+        btn.querySelector(".eye-open").style.display = isPassword ? "none" : "";
+        btn.querySelector(".eye-closed").style.display = isPassword ? "" : "none";
+        btn.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+      }
+    </script>
   </body>
 </html>

@@ -651,6 +651,30 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   color: var(--text-light);
   margin-top: 0.25rem;
 }
+
+/* Password visibility toggle */
+.password-wrapper {
+  position: relative;
+}
+.password-wrapper .form-control {
+  padding-right: 2.5rem;
+}
+.password-toggle {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+.password-toggle:hover {
+  color: var(--text);
+}
 .form-actions {
   display: flex;
   gap: 0.5rem;
