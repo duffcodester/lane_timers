@@ -40,10 +40,6 @@
     </div>
   <% end %>
 
-  <%= button_to "Clear All Bookings", clear_bookings_path, method: :delete,
-      class: "btn btn-small btn-danger",
-      params: { date: @date },
-      data: { turbo_confirm: "Are you sure you want to delete ALL bookings for #{@date.strftime('%B %d, %Y')}?" } %>
 </div>
 
 <% if @sessions.blank? %>
