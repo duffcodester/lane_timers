@@ -79,7 +79,7 @@ class TeamsController < ApplicationController
         duration = ((b.end_time - b.start_time) / 60).to_i
         sheet.add_row [
           b.date.strftime("%Y-%m-%d"),
-          b.lane,
+          "#{b.lane}#{b.sub_lane}",
           b.team.abbreviation.presence || b.team.name,
           b.start_time.strftime("%l:%M %p").strip,
           b.end_time.strftime("%l:%M %p").strip,

@@ -51,10 +51,22 @@
     <table class="schedule-grid">
       <thead>
         <tr>
-          <th class="session-col">Session</th>
-          <th class="time-col">Time</th>
+          <th class="session-col" rowspan="2">Session</th>
+          <th class="time-col" rowspan="2">Time</th>
           <% @lanes.each do |lane| %>
-            <th class="lane-col">Lane <%= lane %></th>
+            <% if [0, 11].include?(lane) %>
+              <th class="lane-col" rowspan="2">Lane <%= lane %></th>
+            <% else %>
+              <th class="lane-col" colspan="2">Lane <%= lane %></th>
+            <% end %>
+          <% end %>
+        </tr>
+        <tr>
+          <% @lanes.each do |lane| %>
+            <% unless [0, 11].include?(lane) %>
+              <th class="sub-lane-col">A</th>
+              <th class="sub-lane-col">B</th>
+            <% end %>
           <% end %>
         </tr>
       </thead>
@@ -75,8 +87,8 @@
               <td class="session-cell"></td>
             <% end %>
             <td class="time-cell"><%= format_time(hour, min) %></td>
-            <% @lanes.each do |lane| %>
-              <% booking = @grid[[lane, hour, min]] %>
+            <% @columns.each do |col| %>
+              <% booking = @grid[[col[:lane], col[:sub_lane], hour, min]] %>
               <% if booking %>
                 <% if booking.start_time.hour == hour && booking.start_time.min == min %>
                   <td class="booked-cell" rowspan="<%= booking.duration_slots %>"
@@ -99,9 +111,6 @@
                       <% if booking.name.present? %>
                         <span class="booking-name"><%= booking.name %></span>
                       <% end %>
-                      <% if booking.phone.present? %>
-                        <span class="booking-phone"><%= booking.formatted_phone %></span>
-                      <% end %>
                       <%= button_to "×", booking_path(booking), method: :delete,
                           class: "btn-remove", data: { turbo_confirm: "Remove this booking?" } %>
                     </div>
@@ -116,7 +125,7 @@
                   <td class="disabled-cell"></td>
                 <% else %>
                   <td class="empty-cell"
-                      data-lane="<%= lane %>" data-hour="<%= hour %>" data-min="<%= min %>"
+                      data-lane="<%= col[:lane] %>" data-sub-lane="<%= col[:sub_lane] %>" data-hour="<%= hour %>" data-min="<%= min %>"
                       data-action="dragover->drag#dragover dragenter->drag#dragenter dragleave->drag#dragleave drop->drag#drop"
                       onclick="openBookingForm(this)">
                   </td>
@@ -135,6 +144,7 @@
       <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
       <input type="hidden" name="booking[id]" data-drag-target="bookingId">
       <input type="hidden" name="booking[lane]" data-drag-target="lane">
+      <input type="hidden" name="booking[sub_lane]" data-drag-target="subLane">
       <input type="hidden" name="booking[start_time]" data-drag-target="startTime">
     </form>
 
@@ -152,9 +162,10 @@
   <!-- Booking modal -->
   <div id="booking-modal" class="modal" style="display:none">
     <div class="modal-content">
-      <h3>Book Lane</h3>
+      <h3>Claim Lane</h3>
       <%= form_with url: bookings_path, method: :post, id: "booking-form" do |f| %>
         <input type="hidden" name="booking[lane]" id="booking-lane">
+        <input type="hidden" name="booking[sub_lane]" id="booking-sub-lane">
         <input type="hidden" name="booking[date]" value="<%= @date %>">
         <input type="hidden" name="booking[start_time]" id="booking-start-time">
         <input type="hidden" name="booking[end_time]" id="booking-end-time">
@@ -187,7 +198,7 @@
         </div>
 
         <div class="field">
-          <label for="booking-phone">Phone</label>
+          <label for="booking-phone">Mobile Phone (10-digit)</label>
           <input type="tel" name="booking[phone]" id="booking-phone">
         </div>
 
@@ -197,13 +208,12 @@
         </div>
 
         <div class="field field-checkbox">
-          <input type="checkbox" name="booking[community_service]" id="booking-community-service" value="1">
           <input type="hidden" name="booking[community_service]" value="0">
-          <label for="booking-community-service">Community Service</label>
+          <label><input type="checkbox" name="booking[community_service]" id="booking-community-service" value="1"> Community Service</label>
         </div>
 
         <div class="actions">
-          <%= f.submit "Book", class: "btn btn-primary" %>
+          <%= f.submit "Claim", class: "btn btn-primary" %>
           <button type="button" class="btn" onclick="closeBookingForm()">Cancel</button>
         </div>
       <% end %>
@@ -212,7 +222,7 @@
   <!-- Edit booking modal -->
   <div id="edit-modal" class="modal" style="display:none">
     <div class="modal-content">
-      <h3>Edit Booking</h3>
+      <h3>Edit Lane</h3>
       <form method="post" id="edit-form" action="">
         <input type="hidden" name="_method" value="patch">
         <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
@@ -233,7 +243,7 @@
         </div>
 
         <div class="field">
-          <label for="edit-phone">Phone</label>
+          <label for="edit-phone">Mobile Phone (10-digit)</label>
           <input type="tel" name="booking[phone]" id="edit-phone">
         </div>
 
@@ -243,9 +253,8 @@
         </div>
 
         <div class="field field-checkbox">
-          <input type="checkbox" name="booking[community_service]" id="edit-community-service" value="1">
           <input type="hidden" name="booking[community_service]" value="0">
-          <label for="edit-community-service">Community Service</label>
+          <label><input type="checkbox" name="booking[community_service]" id="edit-community-service" value="1"> Community Service</label>
         </div>
 
         <div class="actions">
@@ -262,6 +271,7 @@
 
   function openBookingForm(cell) {
     var lane = cell.dataset.lane;
+    var subLane = cell.dataset.subLane || "";
     var hour = cell.dataset.hour;
     var min = cell.dataset.min;
 
@@ -269,6 +279,7 @@
     bookingStartMin = parseInt(min);
 
     document.getElementById("booking-lane").value = lane;
+    document.getElementById("booking-sub-lane").value = subLane;
     document.getElementById("booking-start-time").value =
       hour.padStart(2, '0') + ":" + min.padStart(2, '0');
     document.getElementById("booking-duration").value = "60";
@@ -277,8 +288,9 @@
     document.getElementById("booking-notes").value = "";
     document.getElementById("booking-community-service").checked = false;
     updateEndTime();
+    var laneLabel = subLane ? "Lane " + lane + subLane : "Lane " + lane;
     document.getElementById("booking-info").textContent =
-      "Lane " + lane + " at " + formatTime(parseInt(hour), parseInt(min));
+      laneLabel + " at " + formatTime(parseInt(hour), parseInt(min));
     document.getElementById("booking-modal").style.display = "flex";
   }
 

@@ -148,6 +148,13 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
 }
 .time-col { width: 70px; min-width: 70px; }
 .lane-col { min-width: 90px; }
+.sub-lane-col {
+  min-width: 45px;
+  font-size: 0.7rem;
+  background: var(--text);
+  color: white;
+  padding: 0.15rem 0.25rem;
+}
 
 .schedule-grid td {
   border: 1px solid var(--border);
@@ -353,6 +360,8 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   box-shadow: 0 10px 40px rgba(0,0,0,0.2);
   min-width: 300px;
   max-width: 400px;
+  overflow: hidden;
+  width: 100%;
 }
 .modal-content h3 { margin-bottom: 1rem; }
 
@@ -360,16 +369,15 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
 .field {
   margin-bottom: 1rem;
 }
-.field-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
 .field-checkbox label {
   display: inline;
   font-weight: 600;
   font-size: 0.875rem;
   margin-bottom: 0;
+}
+.field-checkbox input[type="checkbox"] {
+  margin-right: 0.4rem;
+  vertical-align: middle;
 }
 .field label {
   display: block;
@@ -904,6 +912,7 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
     min-width: auto;
     max-width: calc(100vw - 2rem);
     margin: 1rem;
+    padding: 1rem;
   }
 
   /* Tools page */

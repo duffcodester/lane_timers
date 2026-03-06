@@ -70,19 +70,28 @@ class BookingsController < ApplicationController
     if @sessions.any?
       @bookings = Booking.where(date: @date).includes(:team)
 
-      # Build a lookup: { [lane, hour, minute] => booking }
+      # Build a lookup: { [lane, sub_lane, hour, minute] => booking }
       @grid = {}
       @bookings.each do |booking|
         slots = booking.duration_slots
         slots.times do |i|
           slot_time = booking.start_time + (i * 15).minutes
-          @grid[[booking.lane, slot_time.hour, slot_time.min]] = booking
+          @grid[[booking.lane, booking.sub_lane, slot_time.hour, slot_time.min]] = booking
         end
       end
 
       # Merge time slots from all sessions, deduplicate and sort
       @time_slots = @sessions.flat_map(&:time_slots).uniq.sort
       @lanes = (0..11).to_a.reverse
+
+      # Build column list: lanes 0 and 11 get one column, lanes 1-10 get A and B
+      @columns = @lanes.flat_map do |lane|
+        if [0, 11].include?(lane)
+          [{ lane: lane, sub_lane: nil }]
+        else
+          [{ lane: lane, sub_lane: "A" }, { lane: lane, sub_lane: "B" }]
+        end
+      end
 
       # Map session start times to session info for the session column
       @session_starts = {}
@@ -130,9 +139,12 @@ class BookingsController < ApplicationController
 
     bp = booking_params
 
-    # Drag-and-drop sends lane + start_time — preserve the booking's duration
+    # Drag-and-drop sends lane + sub_lane + start_time — preserve the booking's duration
     if bp[:lane].present?
       attrs[:lane] = bp[:lane].to_i
+    end
+    if bp.key?(:sub_lane)
+      attrs[:sub_lane] = bp[:sub_lane].presence
     end
     if bp[:start_time].present?
       new_start = Time.zone.parse("#{date} #{bp[:start_time]}")
@@ -190,10 +202,10 @@ class BookingsController < ApplicationController
   private
 
   def booking_params
-    params.require(:booking).permit(:team_id, :lane, :date, :start_time, :end_time, :name, :phone, :notes, :community_service)
+    params.require(:booking).permit(:team_id, :lane, :sub_lane, :date, :start_time, :end_time, :name, :phone, :notes, :community_service)
   end
 
   def booking_edit_params
-    params.require(:booking).permit(:team_id, :lane, :date, :start_time, :end_time, :name, :phone, :notes, :community_service)
+    params.require(:booking).permit(:team_id, :lane, :sub_lane, :date, :start_time, :end_time, :name, :phone, :notes, :community_service)
   end
 end

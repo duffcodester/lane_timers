@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["form", "bookingId", "lane", "startTime"]
+  static targets = ["form", "bookingId", "lane", "subLane", "startTime"]
 
   dragstart(event) {
     const cell = event.target.closest(".booked-cell")
@@ -39,12 +39,14 @@ export default class extends Controller {
     if (!bookingId) return
 
     const lane = cell.dataset.lane
+    const subLane = cell.dataset.subLane || ""
     const hour = cell.dataset.hour.padStart(2, "0")
     const min = cell.dataset.min.padStart(2, "0")
 
     this.formTarget.action = this.formTarget.action.replace(/\/\d+$/, `/${bookingId}`)
     this.bookingIdTarget.value = bookingId
     this.laneTarget.value = lane
+    this.subLaneTarget.value = subLane
     this.startTimeTarget.value = `${hour}:${min}`
     const scrollY = window.scrollY
     document.addEventListener("turbo:load", () => {

@@ -5,6 +5,8 @@ class Booking < ApplicationRecord
   validates :date, presence: true
   validates :start_time, presence: true
   validates :end_time, presence: true
+  validates :sub_lane, inclusion: { in: %w[A B], message: "must be A or B" }, if: -> { lane.present? && (1..10).include?(lane) }
+  validate :sub_lane_must_be_nil_for_edge_lanes
   validate :times_on_15_minute_boundary
   validate :end_time_after_start_time
   validate :minimum_duration
@@ -13,6 +15,7 @@ class Booking < ApplicationRecord
   validate :not_during_closed_or_break
 
   before_validation :normalize_phone
+  before_validation :clear_sub_lane_for_edge_lanes
 
   def formatted_phone
     return nil unless phone.present?
@@ -25,6 +28,10 @@ class Booking < ApplicationRecord
   end
 
   private
+
+  def clear_sub_lane_for_edge_lanes
+    self.sub_lane = nil if lane.present? && [0, 11].include?(lane)
+  end
 
   def normalize_phone
     self.phone = phone.gsub(/\D/, "") if phone.present?
@@ -63,6 +70,13 @@ class Booking < ApplicationRecord
     end
   end
 
+  def sub_lane_must_be_nil_for_edge_lanes
+    return unless lane.present?
+    if [0, 11].include?(lane) && sub_lane.present?
+      errors.add(:sub_lane, "must be blank for lane #{lane}")
+    end
+  end
+
   def no_overlapping_bookings
     return unless lane && date && start_time && end_time
 
@@ -70,10 +84,17 @@ class Booking < ApplicationRecord
     # existing.start_time < new.end_time AND existing.end_time > new.start_time
     scope = Booking.where(lane: lane, date: date)
       .where("start_time < ? AND end_time > ?", end_time, start_time)
+
+    # For lanes with sub-lanes, only check overlap within the same sub-lane
+    if (1..10).include?(lane)
+      scope = scope.where(sub_lane: sub_lane)
+    end
+
     scope = scope.where.not(id: id) if persisted?
 
+    lane_label = (1..10).include?(lane) ? "lane #{lane}#{sub_lane}" : "lane #{lane}"
     if scope.exists?
-      errors.add(:base, "This slot overlaps with an existing booking on lane #{lane}")
+      errors.add(:base, "This slot overlaps with an existing booking on #{lane_label}")
     end
   end
 end

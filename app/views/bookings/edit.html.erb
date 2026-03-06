@@ -22,7 +22,12 @@
 
   <div class="field">
     <%= f.label :lane %>
-    <%= f.number_field :lane, min: 0, max: 11, required: true %>
+    <%= f.number_field :lane, min: 0, max: 11, required: true, onchange: "toggleSubLane()" %>
+  </div>
+
+  <div class="field" id="sub-lane-field" style="<%= 'display:none' if [0, 11].include?(@booking.lane) %>">
+    <%= f.label :sub_lane, "Timer (A/B)" %>
+    <%= f.select :sub_lane, [["A", "A"], ["B", "B"]], { prompt: "Select..." }, required: (1..10).include?(@booking.lane) %>
   </div>
 
   <div class="field">
@@ -46,7 +51,7 @@
   </div>
 
   <div class="field">
-    <%= f.label :phone %>
+    <%= f.label :phone, "Mobile Phone (10-digit)" %>
     <%= f.telephone_field :phone %>
   </div>
 
@@ -65,3 +70,18 @@
     <%= link_to "Cancel", list_bookings_path, class: "btn" %>
   </div>
 <% end %>
+
+<script>
+  function toggleSubLane() {
+    var lane = parseInt(document.getElementById("booking_lane").value);
+    var field = document.getElementById("sub-lane-field");
+    if (lane >= 1 && lane <= 10) {
+      field.style.display = "";
+      field.querySelector("select").required = true;
+    } else {
+      field.style.display = "none";
+      field.querySelector("select").required = false;
+      field.querySelector("select").value = "";
+    }
+  }
+</script>

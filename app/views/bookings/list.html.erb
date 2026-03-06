@@ -69,7 +69,7 @@
         <td><%= booking.date.strftime("%b %-d, %Y") %></td>
         <td><%= booking.start_time.strftime("%l:%M %p").strip %></td>
         <td><%= booking.end_time.strftime("%l:%M %p").strip %></td>
-        <td><%= booking.lane %></td>
+        <td><%= booking.lane %><%= booking.sub_lane %></td>
         <td><%= "%.2f" % booking.hours.to_f %></td>
         <td><%= booking.name %></td>
         <td><%= booking.formatted_phone %></td>
