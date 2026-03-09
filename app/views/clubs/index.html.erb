@@ -1,12 +1,12 @@
-<h1>Teams (<%= @total_count %>)</h1>
+<h1>Clubs (<%= @total_count %>)</h1>
 
-<% all_columns = %w[name abbreviation coach hours booked address phone email misc_expense actions] %>
+<% all_columns = %w[name abbreviation coach hours booked address phone email misc_expense bookable actions] %>
 
 <div class="teams-toolbar">
   <div class="teams-toolbar-left">
-    <%= link_to "New Team", new_team_path, class: "btn btn-primary" %>
-    <%= link_to "Export to Excel", export_teams_path, class: "btn" %>
-    <%= form_tag import_teams_path, multipart: true, class: "import-form" do %>
+    <%= link_to "New Club", new_club_path, class: "btn btn-primary" %>
+    <%= link_to "Export to Excel", export_clubs_path, class: "btn" %>
+    <%= form_tag import_clubs_path, multipart: true, class: "import-form" do %>
       <%= file_field_tag :file, accept: ".csv", onchange: "this.form.submit()" %>
       <label for="file" class="btn">Import CSV</label>
     <% end %>
@@ -15,18 +15,18 @@
       <div id="columns-menu" class="columns-menu" style="display:none">
         <% { "name" => "Name", "abbreviation" => "Abbr", "coach" => "Coach", "hours" => "Forecast", "booked" => "Booked",
              "address" => "Address", "phone" => "Phone", "email" => "Email",
-             "misc_expense" => "Misc Expense", "actions" => "Actions" }.each do |col, label| %>
+             "misc_expense" => "Misc Expense", "bookable" => "Bookable", "actions" => "Actions" }.each do |col, label| %>
           <% visible = @column_prefs.empty? || @column_prefs[col] != false %>
           <label><input type="checkbox" data-col="<%= col %>" <%= "checked" if visible %> onchange="toggleColumn('<%= col %>')"> <%= label %></label>
         <% end %>
       </div>
     </div>
   </div>
-  <%= form_tag teams_path, method: :get, class: "search-form" do %>
-    <%= text_field_tag :search, params[:search], placeholder: "Search teams...", class: "search-input" %>
+  <%= form_tag clubs_path, method: :get, class: "search-form" do %>
+    <%= text_field_tag :search, params[:search], placeholder: "Search clubs...", class: "search-input" %>
     <%= submit_tag "Search", class: "btn btn-small" %>
     <% if params[:search].present? %>
-      <%= link_to "Clear", teams_path, class: "btn btn-small" %>
+      <%= link_to "Clear", clubs_path, class: "btn btn-small" %>
     <% end %>
   <% end %>
 </div>
@@ -45,28 +45,30 @@
       <th data-col="phone" <%= 'style="display:none"'.html_safe if hidden.include?("phone") %>><%= sort_link "Phone", "phone" %></th>
       <th data-col="email" <%= 'style="display:none"'.html_safe if hidden.include?("email") %>><%= sort_link "Email", "email" %></th>
       <th data-col="misc_expense" <%= 'style="display:none"'.html_safe if hidden.include?("misc_expense") %>><%= sort_link "Misc Expense", "misc_expense" %></th>
+      <th data-col="bookable" <%= 'style="display:none"'.html_safe if hidden.include?("bookable") %>>Bookable</th>
       <th data-col="actions" <%= 'style="display:none"'.html_safe if hidden.include?("actions") %>>Actions</th>
     </tr>
   </thead>
   <tbody>
-    <% @teams.each do |team| %>
+    <% @clubs.each do |club| %>
       <tr>
         <td data-col="name" <%= 'style="display:none"'.html_safe if hidden.include?("name") %>>
-          <span class="color-swatch" style="background-color: <%= team.color %>; display:inline-block; vertical-align:middle"></span>
-          <%= team.name %>
+          <span class="color-swatch" style="background-color: <%= club.color %>; display:inline-block; vertical-align:middle"></span>
+          <%= club.name %>
         </td>
-        <td data-col="abbreviation" <%= 'style="display:none"'.html_safe if hidden.include?("abbreviation") %>><%= team.abbreviation %></td>
-        <td data-col="coach" <%= 'style="display:none"'.html_safe if hidden.include?("coach") %>><%= team.coach %></td>
-        <td data-col="hours" <%= 'style="display:none"'.html_safe if hidden.include?("hours") %>><%= "%.2f" % team.total_hours.to_f %></td>
-        <td data-col="booked" <%= 'style="display:none"'.html_safe if hidden.include?("booked") %>><%= "%.2f" % team.booked_hours.to_f %></td>
-        <td data-col="address" <%= 'style="display:none"'.html_safe if hidden.include?("address") %>><%= team.address %></td>
-        <td data-col="phone" <%= 'style="display:none"'.html_safe if hidden.include?("phone") %>><%= team.phone %></td>
-        <td data-col="email" <%= 'style="display:none"'.html_safe if hidden.include?("email") %>><%= team.email %></td>
-        <td data-col="misc_expense" <%= 'style="display:none"'.html_safe if hidden.include?("misc_expense") %>><%= number_to_currency(team.misc_expense) %></td>
+        <td data-col="abbreviation" <%= 'style="display:none"'.html_safe if hidden.include?("abbreviation") %>><%= club.abbreviation %></td>
+        <td data-col="coach" <%= 'style="display:none"'.html_safe if hidden.include?("coach") %>><%= club.coach %></td>
+        <td data-col="hours" <%= 'style="display:none"'.html_safe if hidden.include?("hours") %>><%= "%.2f" % club.total_hours.to_f %></td>
+        <td data-col="booked" <%= 'style="display:none"'.html_safe if hidden.include?("booked") %>><%= "%.2f" % club.booked_hours.to_f %></td>
+        <td data-col="address" <%= 'style="display:none"'.html_safe if hidden.include?("address") %>><%= club.address %></td>
+        <td data-col="phone" <%= 'style="display:none"'.html_safe if hidden.include?("phone") %>><%= club.phone %></td>
+        <td data-col="email" <%= 'style="display:none"'.html_safe if hidden.include?("email") %>><%= club.email %></td>
+        <td data-col="misc_expense" <%= 'style="display:none"'.html_safe if hidden.include?("misc_expense") %>><%= number_to_currency(club.misc_expense) %></td>
+        <td data-col="bookable" <%= 'style="display:none"'.html_safe if hidden.include?("bookable") %>><%= club.bookable? ? "\u2705" : "" %></td>
         <td data-col="actions" class="actions-cell" <%= 'style="display:none"'.html_safe if hidden.include?("actions") %>>
-          <%= link_to "Edit", edit_team_path(team), class: "btn btn-small" %>
-          <%= button_to "Delete", team_path(team), method: :delete, class: "btn btn-small btn-danger",
-              data: { turbo_confirm: "Delete #{team.name}?" } %>
+          <%= link_to "Edit", edit_club_path(club), class: "btn btn-small" %>
+          <%= button_to "Delete", club_path(club), method: :delete, class: "btn btn-small btn-danger",
+              data: { turbo_confirm: "Delete #{club.name}?" } %>
         </td>
       </tr>
     <% end %>
@@ -94,7 +96,7 @@
       prefs[cb.dataset.col] = cb.checked;
     });
     var token = document.querySelector("meta[name='csrf-token']").content;
-    fetch("<%= teams_columns_setting_path %>", {
+    fetch("<%= clubs_columns_setting_path %>", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

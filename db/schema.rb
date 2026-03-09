@@ -10,11 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_044239) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_09_035320) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "bookings", force: :cascade do |t|
+    t.integer "club_id", null: false
     t.boolean "community_service", default: false, null: false
     t.datetime "created_at", null: false
     t.date "date", null: false
@@ -25,10 +26,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_044239) do
     t.string "phone"
     t.time "start_time", null: false
     t.string "sub_lane"
-    t.integer "team_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["club_id"], name: "index_bookings_on_club_id"
     t.index ["lane", "sub_lane", "date", "start_time"], name: "index_bookings_on_lane_and_sub_lane_and_date_and_start_time", unique: true
-    t.index ["team_id"], name: "index_bookings_on_team_id"
+  end
+
+  create_table "clubs", force: :cascade do |t|
+    t.string "abbreviation"
+    t.string "address"
+    t.boolean "bookable", default: false, null: false
+    t.string "coach"
+    t.string "color"
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.decimal "misc_expense", precision: 10, scale: 2, default: "0.0"
+    t.string "name", null: false
+    t.string "phone"
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_clubs_on_name", unique: true
   end
 
   create_table "meet_sessions", force: :cascade do |t|
@@ -60,20 +75,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_044239) do
     t.index ["key"], name: "index_settings_on_key", unique: true
   end
 
-  create_table "teams", force: :cascade do |t|
-    t.string "abbreviation"
-    t.string "address"
-    t.string "coach"
-    t.string "color"
-    t.datetime "created_at", null: false
-    t.string "email"
-    t.decimal "misc_expense", precision: 10, scale: 2, default: "0.0"
-    t.string "name", null: false
-    t.string "phone"
-    t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_teams_on_name", unique: true
-  end
-
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "last_seen_at"
@@ -83,6 +84,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_044239) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
-  add_foreign_key "bookings", "teams"
+  add_foreign_key "bookings", "clubs"
   add_foreign_key "meet_sessions", "meets"
 end

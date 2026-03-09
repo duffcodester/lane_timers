@@ -2,7 +2,7 @@ class BookingsController < ApplicationController
   PER_PAGE = 12
 
   SORTABLE_COLUMNS = {
-    "team"       => "teams.name",
+    "club"       => "clubs.name",
     "date"       => "bookings.date",
     "lane"       => "bookings.lane",
     "start_time" => "bookings.start_time",
@@ -17,40 +17,40 @@ class BookingsController < ApplicationController
     @sort_direction = params[:direction] == "desc" ? "desc" : "asc"
     order_sql       = "#{SORTABLE_COLUMNS[@sort_column]} #{@sort_direction}"
 
-    scope = Booking.joins(:team)
-                   .select("bookings.*, teams.name AS team_name, teams.abbreviation AS team_abbreviation, teams.color AS team_color, EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0 AS hours")
+    scope = Booking.joins(:club)
+                   .select("bookings.*, clubs.name AS club_name, clubs.abbreviation AS club_abbreviation, clubs.color AS club_color, EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0 AS hours")
                    .order(Arel.sql(order_sql))
 
     @search = params[:search].to_s.strip
     if @search.present?
       pattern = "%#{@search}%"
       scope = scope.where(
-        "teams.abbreviation ILIKE :q OR teams.name ILIKE :q OR bookings.name ILIKE :q OR bookings.phone ILIKE :q",
+        "clubs.abbreviation ILIKE :q OR clubs.name ILIKE :q OR bookings.name ILIKE :q OR bookings.phone ILIKE :q",
         q: pattern
       )
     end
 
-    @teams = Team.order(:name)
+    @clubs = Club.order(:name)
 
-    # filter_active distinguishes "no filter applied" from "no teams selected"
+    # filter_active distinguishes "no filter applied" from "no clubs selected"
     if params[:filter_active].present?
-      @selected_team_ids = Array(params[:team_ids]).map(&:to_i)
-      scope = scope.where(team_id: @selected_team_ids) if @selected_team_ids.any?
-      scope = scope.none if @selected_team_ids.empty?
+      @selected_club_ids = Array(params[:club_ids]).map(&:to_i)
+      scope = scope.where(club_id: @selected_club_ids) if @selected_club_ids.any?
+      scope = scope.none if @selected_club_ids.empty?
     else
-      @selected_team_ids = @teams.pluck(:id)
+      @selected_club_ids = @clubs.pluck(:id)
     end
 
-    count_scope = Booking.joins(:team)
+    count_scope = Booking.joins(:club)
     if @search.present?
       pattern = "%#{@search}%"
       count_scope = count_scope.where(
-        "teams.abbreviation ILIKE :q OR teams.name ILIKE :q OR bookings.name ILIKE :q OR bookings.phone ILIKE :q",
+        "clubs.abbreviation ILIKE :q OR clubs.name ILIKE :q OR bookings.name ILIKE :q OR bookings.phone ILIKE :q",
         q: pattern
       )
     end
     if params[:filter_active].present?
-      count_scope = @selected_team_ids.any? ? count_scope.where(team_id: @selected_team_ids) : count_scope.none
+      count_scope = @selected_club_ids.any? ? count_scope.where(club_id: @selected_club_ids) : count_scope.none
     end
 
     @total_count  = count_scope.count
@@ -64,11 +64,11 @@ class BookingsController < ApplicationController
     @min_date = MeetSession.minimum(:date)
     @max_date = MeetSession.maximum(:date)
     @date = params[:date] ? Date.parse(params[:date]) : (@min_date || Date.today)
-    @teams = Team.order(:abbreviation)
+    @clubs = Club.where(bookable: true).order(:abbreviation)
     @sessions = MeetSession.where(date: @date).order(:start_time)
 
     if @sessions.any?
-      @bookings = Booking.where(date: @date).includes(:team)
+      @bookings = Booking.where(date: @date).includes(:club)
 
       # Build a lookup: { [lane, sub_lane, hour, minute] => booking }
       @grid = {}
@@ -118,7 +118,7 @@ class BookingsController < ApplicationController
 
   def edit
     @booking = Booking.find(params[:id])
-    @teams = Team.order(:abbreviation)
+    @clubs = Club.where(bookable: true).order(:abbreviation)
   end
 
   def create
@@ -167,7 +167,7 @@ class BookingsController < ApplicationController
       if @booking.update(booking_edit_params)
         redirect_to list_bookings_path, notice: "Booking updated."
       else
-        @teams = Team.order(:abbreviation)
+        @clubs = Club.where(bookable: true).order(:abbreviation)
         render :edit, status: :unprocessable_entity
       end
     else
@@ -202,10 +202,10 @@ class BookingsController < ApplicationController
   private
 
   def booking_params
-    params.require(:booking).permit(:team_id, :lane, :sub_lane, :date, :start_time, :end_time, :name, :phone, :notes, :community_service)
+    params.require(:booking).permit(:club_id, :lane, :sub_lane, :date, :start_time, :end_time, :name, :phone, :notes, :community_service)
   end
 
   def booking_edit_params
-    params.require(:booking).permit(:team_id, :lane, :sub_lane, :date, :start_time, :end_time, :name, :phone, :notes, :community_service)
+    params.require(:booking).permit(:club_id, :lane, :sub_lane, :date, :start_time, :end_time, :name, :phone, :notes, :community_service)
   end
 end

@@ -1,27 +1,27 @@
-class TeamsController < ApplicationController
-  before_action :set_team, only: [:show, :edit, :update, :destroy]
+class ClubsController < ApplicationController
+  before_action :set_club, only: [:show, :edit, :update, :destroy]
 
   SORTABLE_COLUMNS = {
-    "name" => "teams.name",
-    "abbreviation" => "teams.abbreviation",
-    "coach" => "teams.coach",
-    "address" => "teams.address",
-    "phone" => "teams.phone",
-    "email" => "teams.email",
+    "name" => "clubs.name",
+    "abbreviation" => "clubs.abbreviation",
+    "coach" => "clubs.coach",
+    "address" => "clubs.address",
+    "phone" => "clubs.phone",
+    "email" => "clubs.email",
     "hours" => "total_hours",
     "booked" => "booked_hours",
-    "misc_expense" => "teams.misc_expense"
+    "misc_expense" => "clubs.misc_expense"
   }.freeze
 
   PER_PAGE = 12
 
   def index
-    base = Team.all
+    base = Club.all
 
     if params[:search].present?
       q = "%#{params[:search]}%"
       base = base.where(
-        "teams.name ILIKE :q OR teams.abbreviation ILIKE :q OR teams.coach ILIKE :q OR teams.address ILIKE :q OR teams.phone ILIKE :q OR teams.email ILIKE :q",
+        "clubs.name ILIKE :q OR clubs.abbreviation ILIKE :q OR clubs.coach ILIKE :q OR clubs.address ILIKE :q OR clubs.phone ILIKE :q OR clubs.email ILIKE :q",
         q: q
       )
     end
@@ -30,42 +30,42 @@ class TeamsController < ApplicationController
     @sort_direction = params[:direction] == "desc" ? "desc" : "asc"
     order_sql = "#{SORTABLE_COLUMNS[@sort_column]} #{@sort_direction}"
 
-    columns_json = Setting.get("teams_columns")
+    columns_json = Setting.get("clubs_columns")
     @column_prefs = columns_json ? JSON.parse(columns_json) : {}
 
     @total_count = base.count
     @current_page = [params[:page].to_i, 1].max
     @total_pages = [(@total_count.to_f / PER_PAGE).ceil, 1].max
 
-    @teams = base.left_joins(:bookings)
-                 .select("teams.*, COALESCE(SUM(EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0), 0) AS total_hours, COALESCE(SUM(CASE WHEN bookings.name IS NOT NULL AND bookings.name != '' THEN EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0 ELSE 0 END), 0) AS booked_hours")
-                 .group("teams.id")
+    @clubs = base.left_joins(:bookings)
+                 .select("clubs.*, COALESCE(SUM(EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0), 0) AS total_hours, COALESCE(SUM(CASE WHEN bookings.name IS NOT NULL AND bookings.name != '' THEN EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0 ELSE 0 END), 0) AS booked_hours")
+                 .group("clubs.id")
                  .order(Arel.sql(order_sql))
                  .limit(PER_PAGE)
                  .offset((@current_page - 1) * PER_PAGE)
   end
 
   def export
-    teams = Team.left_joins(:bookings)
-                .select("teams.*, COALESCE(SUM(EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0), 0) AS total_hours")
-                .group("teams.id")
-                .order("teams.name ASC")
+    clubs = Club.left_joins(:bookings)
+                .select("clubs.*, COALESCE(SUM(EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0), 0) AS total_hours")
+                .group("clubs.id")
+                .order("clubs.name ASC")
 
-    bookings = Booking.includes(:team).order(:date, :lane, :start_time)
+    bookings = Booking.includes(:club).order(:date, :lane, :start_time)
 
     package = Axlsx::Package.new
     wb = package.workbook
 
-    # Teams sheet
-    wb.add_worksheet(name: "Teams") do |sheet|
+    # Clubs sheet
+    wb.add_worksheet(name: "Clubs") do |sheet|
       header_style = sheet.styles.add_style(b: true, bg_color: "2C3E50", fg_color: "FFFFFF")
       currency_style = sheet.styles.add_style(num_fmt: 7)
       formula_style = sheet.styles.add_style(num_fmt: 7, b: true)
       sheet.add_row ["Name", "Abbreviation", "Coach", "Address", "Phone", "Email", "Hours", "Amount", "Misc Expenses", "Total"], style: header_style
-      teams.each_with_index do |team, i|
+      clubs.each_with_index do |club, i|
         row = i + 2
-        hours = team.total_hours.to_f
-        sheet.add_row [team.name, team.abbreviation, team.coach, team.address, team.phone, team.email, "%.2f" % hours, hours * 12, team.misc_expense.to_f, "=H#{row}+I#{row}"],
+        hours = club.total_hours.to_f
+        sheet.add_row [club.name, club.abbreviation, club.coach, club.address, club.phone, club.email, "%.2f" % hours, hours * 12, club.misc_expense.to_f, "=H#{row}+I#{row}"],
           style: [nil, nil, nil, nil, nil, nil, nil, currency_style, currency_style, formula_style],
           escape_formulas: false
       end
@@ -74,13 +74,13 @@ class TeamsController < ApplicationController
     # Bookings sheet
     wb.add_worksheet(name: "Bookings") do |sheet|
       header_style = sheet.styles.add_style(b: true, bg_color: "2C3E50", fg_color: "FFFFFF")
-      sheet.add_row ["Date", "Lane", "Team", "Start Time", "End Time", "Duration (min)", "Name", "Phone"], style: header_style
+      sheet.add_row ["Date", "Lane", "Club", "Start Time", "End Time", "Duration (min)", "Name", "Phone"], style: header_style
       bookings.each do |b|
         duration = ((b.end_time - b.start_time) / 60).to_i
         sheet.add_row [
           b.date.strftime("%Y-%m-%d"),
           "#{b.lane}#{b.sub_lane}",
-          b.team.abbreviation.presence || b.team.name,
+          b.club.abbreviation.presence || b.club.name,
           b.start_time.strftime("%l:%M %p").strip,
           b.end_time.strftime("%l:%M %p").strip,
           duration,
@@ -98,7 +98,7 @@ class TeamsController < ApplicationController
   def import
     file = params[:file]
     unless file
-      redirect_to teams_path, alert: "Please select a CSV file."
+      redirect_to clubs_path, alert: "Please select a CSV file."
       return
     end
 
@@ -122,12 +122,12 @@ class TeamsController < ApplicationController
         misc_expense: (row["misc_expense"] || row["misc expense"]).presence
       }.compact
 
-      team = Team.find_by(name: name)
-      if team
-        team.update(attrs)
+      club = Club.find_by(name: name)
+      if club
+        club.update(attrs)
         updated += 1
       else
-        if Team.create(attrs).persisted?
+        if Club.create(attrs).persisted?
           created += 1
         else
           errors << name
@@ -135,20 +135,20 @@ class TeamsController < ApplicationController
       end
     end
 
-    msg = "Imported #{created} new team(s)."
-    msg += " Updated #{updated} existing team(s)." if updated > 0
+    msg = "Imported #{created} new club(s)."
+    msg += " Updated #{updated} existing club(s)." if updated > 0
     msg += " Failed: #{errors.join(', ')}." if errors.any?
-    redirect_to teams_path, notice: msg
+    redirect_to clubs_path, notice: msg
   end
 
   def new
-    @team = Team.new
+    @club = Club.new
   end
 
   def create
-    @team = Team.new(team_params)
-    if @team.save
-      redirect_to teams_path, notice: "Team created successfully."
+    @club = Club.new(club_params)
+    if @club.save
+      redirect_to clubs_path, notice: "Club created successfully."
     else
       render :new, status: :unprocessable_entity
     end
@@ -158,29 +158,29 @@ class TeamsController < ApplicationController
   end
 
   def update
-    if @team.update(team_params)
-      redirect_to teams_path, notice: "Team updated successfully."
+    if @club.update(club_params)
+      redirect_to clubs_path, notice: "Club updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
-    if @team.bookings.where("date >= ?", Date.today).exists?
-      redirect_to teams_path, alert: "Cannot delete team with future bookings."
+    if @club.bookings.where("date >= ?", Date.today).exists?
+      redirect_to clubs_path, alert: "Cannot delete club with future bookings."
     else
-      @team.destroy
-      redirect_to teams_path, notice: "Team deleted."
+      @club.destroy
+      redirect_to clubs_path, notice: "Club deleted."
     end
   end
 
   private
 
-  def set_team
-    @team = Team.find(params[:id])
+  def set_club
+    @club = Club.find(params[:id])
   end
 
-  def team_params
-    params.require(:team).permit(:name, :abbreviation, :color, :coach, :address, :phone, :email, :misc_expense)
+  def club_params
+    params.require(:club).permit(:name, :abbreviation, :color, :coach, :address, :phone, :email, :misc_expense)
   end
 end

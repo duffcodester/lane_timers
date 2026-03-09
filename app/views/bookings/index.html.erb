@@ -19,21 +19,21 @@
     <% end %>
   </div>
 
-  <% if @teams&.any? %>
-    <div class="columns-dropdown" id="team-filter-dropdown">
-      <button type="button" class="btn btn-small" onclick="toggleTeamFilterMenu()">Filter Teams</button>
-      <div id="team-filter-menu" class="columns-menu" style="display:none">
+  <% if @clubs&.any? %>
+    <div class="columns-dropdown" id="club-filter-dropdown">
+      <button type="button" class="btn btn-small" onclick="toggleClubFilterMenu()">Filter Clubs</button>
+      <div id="club-filter-menu" class="columns-menu" style="display:none">
         <div class="team-filter-actions">
-          <button type="button" class="btn btn-small" onclick="selectAllTeams()">All</button>
-          <button type="button" class="btn btn-small" onclick="selectNoneTeams()">None</button>
+          <button type="button" class="btn btn-small" onclick="selectAllClubs()">All</button>
+          <button type="button" class="btn btn-small" onclick="selectNoneClubs()">None</button>
         </div>
-        <% @teams.each do |team| %>
+        <% @clubs.each do |club| %>
           <label>
-            <input type="checkbox" data-team-id="<%= team.id %>"
-                   onchange="applyTeamFilter()"
+            <input type="checkbox" data-club-id="<%= club.id %>"
+                   onchange="applyClubFilter()"
                    checked>
-            <span class="color-swatch" style="background-color: <%= team.color %>; display:inline-block; vertical-align:middle"></span>
-            <%= team.abbreviation.presence || team.name %>
+            <span class="color-swatch" style="background-color: <%= club.color %>; display:inline-block; vertical-align:middle"></span>
+            <%= club.abbreviation.presence || club.name %>
           </label>
         <% end %>
       </div>
@@ -44,8 +44,8 @@
 
 <% if @sessions.blank? %>
   <p class="empty-state">No session configured for this date. <%= link_to "Manage sessions", meet_sessions_path %>.</p>
-<% elsif @teams.empty? %>
-  <p class="empty-state">No teams created yet. <%= link_to "Create teams", teams_path %> first.</p>
+<% elsif @clubs.empty? %>
+  <p class="empty-state">No clubs created yet. <%= link_to "Create clubs", clubs_path %> first.</p>
 <% else %>
   <div class="grid-wrapper" data-controller="drag resize" data-schedule-date="<%= @date.iso8601 %>">
     <table class="schedule-grid">
@@ -93,7 +93,7 @@
                 <% if booking.start_time.hour == hour && booking.start_time.min == min %>
                   <td class="booked-cell" rowspan="<%= booking.duration_slots %>"
                       draggable="true"
-                      data-team-id="<%= booking.team.id %>"
+                      data-club-id="<%= booking.club.id %>"
                       data-booking-id="<%= booking.id %>"
                       data-booking-name="<%= booking.name %>"
                       data-booking-phone="<%= booking.phone %>"
@@ -103,11 +103,11 @@
                       data-booking-community-service="<%= booking.community_service %>"
                       data-action="dragstart->drag#dragstart dragend->drag#dragend"
                       onclick="openEditForm(event, this)"
-                      style="background-color: <%= booking.team.color %>20; border-left: 4px solid <%= booking.team.color %>">
+                      style="background-color: <%= booking.club.color %>20; border-left: 4px solid <%= booking.club.color %>">
                     <div class="resize-handle resize-handle-top" draggable="false"
                          data-action="mousedown->resize#startTop"></div>
                     <div class="booking-content">
-                      <span class="team-name"><%= booking.team.abbreviation.presence || booking.team.name %></span>
+                      <span class="team-name"><%= booking.club.abbreviation.presence || booking.club.name %></span>
                       <% if booking.name.present? %>
                         <span class="booking-name"><%= booking.name %></span>
                       <% end %>
@@ -173,9 +173,9 @@
         <p id="booking-info"></p>
 
         <div class="field">
-          <%= f.label :team_id, "Team" %>
-          <%= f.select :team_id, @teams.map { |t| [t.abbreviation.presence || t.name, t.id] },
-              { prompt: "Select a team..." }, { name: "booking[team_id]", required: true } %>
+          <%= f.label :club_id, "Club" %>
+          <%= f.select :club_id, @clubs.map { |c| [c.abbreviation.presence || c.name, c.id] },
+              { prompt: "Select a club..." }, { name: "booking[club_id]", required: true } %>
         </div>
 
         <div class="field">
@@ -377,19 +377,19 @@
     btn.closest("form")?.addEventListener("turbo:submit-start", preserveScroll);
   });
 
-  // ── Team filter ──────────────────────────────────────────────────────────
-  var FILTER_KEY = "schedule_team_filter";
+  // ── Club filter ──────────────────────────────────────────────────────────
+  var FILTER_KEY = "schedule_club_filter";
 
-  function toggleTeamFilterMenu() {
-    var menu = document.getElementById("team-filter-menu");
+  function toggleClubFilterMenu() {
+    var menu = document.getElementById("club-filter-menu");
     menu.style.display = menu.style.display === "none" ? "block" : "none";
   }
 
-  function applyTeamFilter() {
-    var hidden = getHiddenTeams();
-    saveHiddenTeams(hidden);
-    document.querySelectorAll(".booked-cell[data-team-id]").forEach(function(cell) {
-      if (hidden.includes(cell.dataset.teamId)) {
+  function applyClubFilter() {
+    var hidden = getHiddenClubs();
+    saveHiddenClubs(hidden);
+    document.querySelectorAll(".booked-cell[data-club-id]").forEach(function(cell) {
+      if (hidden.includes(cell.dataset.clubId)) {
         cell.classList.add("team-hidden");
       } else {
         cell.classList.remove("team-hidden");
@@ -397,53 +397,53 @@
     });
   }
 
-  function selectAllTeams() {
-    document.querySelectorAll("#team-filter-menu input[type='checkbox']").forEach(function(cb) {
+  function selectAllClubs() {
+    document.querySelectorAll("#club-filter-menu input[type='checkbox']").forEach(function(cb) {
       cb.checked = true;
     });
-    applyTeamFilter();
+    applyClubFilter();
   }
 
-  function selectNoneTeams() {
-    document.querySelectorAll("#team-filter-menu input[type='checkbox']").forEach(function(cb) {
+  function selectNoneClubs() {
+    document.querySelectorAll("#club-filter-menu input[type='checkbox']").forEach(function(cb) {
       cb.checked = false;
     });
-    applyTeamFilter();
+    applyClubFilter();
   }
 
-  function getHiddenTeams() {
+  function getHiddenClubs() {
     var hidden = [];
-    document.querySelectorAll("#team-filter-menu input[type='checkbox']").forEach(function(cb) {
-      if (!cb.checked) hidden.push(cb.dataset.teamId);
+    document.querySelectorAll("#club-filter-menu input[type='checkbox']").forEach(function(cb) {
+      if (!cb.checked) hidden.push(cb.dataset.clubId);
     });
     return hidden;
   }
 
-  function saveHiddenTeams(hidden) {
+  function saveHiddenClubs(hidden) {
     localStorage.setItem(FILTER_KEY, JSON.stringify(hidden));
   }
 
-  function loadTeamFilter() {
+  function loadClubFilter() {
     var saved = localStorage.getItem(FILTER_KEY);
     if (!saved) return;
     var hidden;
     try { hidden = JSON.parse(saved); } catch(e) { return; }
     if (!Array.isArray(hidden) || hidden.length === 0) return;
-    document.querySelectorAll("#team-filter-menu input[type='checkbox']").forEach(function(cb) {
-      if (hidden.includes(cb.dataset.teamId)) cb.checked = false;
+    document.querySelectorAll("#club-filter-menu input[type='checkbox']").forEach(function(cb) {
+      if (hidden.includes(cb.dataset.clubId)) cb.checked = false;
     });
-    applyTeamFilter();
+    applyClubFilter();
   }
 
-  // Close team filter menu when clicking outside
+  // Close club filter menu when clicking outside
   document.addEventListener("click", function(e) {
-    var dropdown = document.getElementById("team-filter-dropdown");
+    var dropdown = document.getElementById("club-filter-dropdown");
     if (dropdown && !dropdown.contains(e.target)) {
-      document.getElementById("team-filter-menu").style.display = "none";
+      document.getElementById("club-filter-menu").style.display = "none";
     }
   });
 
-  loadTeamFilter();
+  loadClubFilter();
 
   // ── Current time line ────────────────────────────────────────────────────
   function updateCurrentTimeLine() {

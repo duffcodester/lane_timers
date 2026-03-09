@@ -98,57 +98,57 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   end
 
   # -----------------------------------------------------------------------
-  # Teams
+  # Clubs
   # -----------------------------------------------------------------------
 
-  test "teams index requires authentication" do
-    get teams_path
+  test "clubs index requires authentication" do
+    get clubs_path
     assert_requires_login
   end
 
-  test "teams index is accessible when authenticated" do
+  test "clubs index is accessible when authenticated" do
     log_in_as users(:alice)
-    get teams_path
+    get clubs_path
     assert_response :ok
   end
 
-  test "new team form requires authentication" do
-    get new_team_path
+  test "new club form requires authentication" do
+    get new_club_path
     assert_requires_login
   end
 
-  test "team show requires authentication" do
-    get team_path(teams(:sharks))
+  test "club show requires authentication" do
+    get club_path(clubs(:sharks))
     assert_requires_login
   end
 
-  test "team edit form requires authentication" do
-    get edit_team_path(teams(:sharks))
+  test "club edit form requires authentication" do
+    get edit_club_path(clubs(:sharks))
     assert_requires_login
   end
 
-  test "create team requires authentication" do
-    post teams_path, params: { team: { name: "New Team", color: "#ff0000" } }
+  test "create club requires authentication" do
+    post clubs_path, params: { club: { name: "New Club", color: "#ff0000" } }
     assert_requires_login
   end
 
-  test "update team requires authentication" do
-    patch team_path(teams(:sharks)), params: { team: { name: "Updated" } }
+  test "update club requires authentication" do
+    patch club_path(clubs(:sharks)), params: { club: { name: "Updated" } }
     assert_requires_login
   end
 
-  test "delete team requires authentication" do
-    delete team_path(teams(:sharks))
+  test "delete club requires authentication" do
+    delete club_path(clubs(:sharks))
     assert_requires_login
   end
 
-  test "export teams requires authentication" do
-    get export_teams_path
+  test "export clubs requires authentication" do
+    get export_clubs_path
     assert_requires_login
   end
 
-  test "import teams requires authentication" do
-    post import_teams_path, params: { file: "" }
+  test "import clubs requires authentication" do
+    post import_clubs_path, params: { file: "" }
     assert_requires_login
   end
 
@@ -202,8 +202,8 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   # Settings
   # -----------------------------------------------------------------------
 
-  test "updating teams column settings requires authentication" do
-    patch teams_columns_setting_path, params: { columns: { name: true } },
+  test "updating clubs column settings requires authentication" do
+    patch clubs_columns_setting_path, params: { columns: { name: true } },
                                       as: :json
     assert_requires_login
   end
@@ -287,7 +287,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     log_in_as users(:alice)
     get root_path
     assert_response :ok
-    get teams_path
+    get clubs_path
     assert_response :ok
     get meet_sessions_path
     assert_response :ok

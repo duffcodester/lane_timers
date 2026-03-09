@@ -6,33 +6,33 @@
       <%= hidden_field_tag :sort,         params[:sort]         if params[:sort].present? %>
       <%= hidden_field_tag :direction,    params[:direction]    if params[:direction].present? %>
       <%= hidden_field_tag :filter_active, 1                    if params[:filter_active].present? %>
-      <% Array(params[:team_ids]).each do |id| %>
-        <%= hidden_field_tag "team_ids[]", id %>
+      <% Array(params[:club_ids]).each do |id| %>
+        <%= hidden_field_tag "club_ids[]", id %>
       <% end %>
-      <%= text_field_tag :search, @search, placeholder: "Search team, name, phone…", class: "form-control search-input" %>
+      <%= text_field_tag :search, @search, placeholder: "Search club, name, phone…", class: "form-control search-input" %>
     <% end %>
-    <% if @teams.any? %>
-      <div class="columns-dropdown" id="team-filter-dropdown">
-        <button type="button" class="btn" onclick="toggleTeamFilterMenu()">Filter Teams</button>
-        <div id="team-filter-menu" class="columns-menu" style="display:none">
-          <%= form_with url: list_bookings_path, method: :get, id: "team-filter-form" do %>
+    <% if @clubs.any? %>
+      <div class="columns-dropdown" id="club-filter-dropdown">
+        <button type="button" class="btn" onclick="toggleClubFilterMenu()">Filter Clubs</button>
+        <div id="club-filter-menu" class="columns-menu" style="display:none">
+          <%= form_with url: list_bookings_path, method: :get, id: "club-filter-form" do %>
             <%= hidden_field_tag :sort,      params[:sort]      if params[:sort].present? %>
             <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
             <%= hidden_field_tag :search,    @search            if @search.present? %>
             <%= hidden_field_tag :filter_active, 1 %>
 
             <div class="team-filter-actions">
-              <button type="button" class="btn btn-small" onclick="selectAllTeams()">All</button>
-              <button type="button" class="btn btn-small" onclick="selectNoneTeams()">None</button>
+              <button type="button" class="btn btn-small" onclick="selectAllClubs()">All</button>
+              <button type="button" class="btn btn-small" onclick="selectNoneClubs()">None</button>
             </div>
 
-            <% @teams.each do |team| %>
+            <% @clubs.each do |club| %>
               <label>
-                <input type="checkbox" name="team_ids[]" value="<%= team.id %>"
+                <input type="checkbox" name="club_ids[]" value="<%= club.id %>"
                        onchange="this.form.submit()"
-                       <%= "checked" if @selected_team_ids.include?(team.id) %>>
-                <span class="color-swatch" style="background-color: <%= team.color %>; display:inline-block; vertical-align:middle"></span>
-                <%= team.abbreviation.presence || team.name %>
+                       <%= "checked" if @selected_club_ids.include?(club.id) %>>
+                <span class="color-swatch" style="background-color: <%= club.color %>; display:inline-block; vertical-align:middle"></span>
+                <%= club.abbreviation.presence || club.name %>
               </label>
             <% end %>
           <% end %>
@@ -46,7 +46,7 @@
 <table class="teams-table">
   <thead>
     <tr>
-      <th><%= bookings_sort_link "Team",       "team" %></th>
+      <th><%= bookings_sort_link "Club",        "club" %></th>
       <th><%= bookings_sort_link "Date",       "date" %></th>
       <th><%= bookings_sort_link "Start Time", "start_time" %></th>
       <th><%= bookings_sort_link "End Time",   "end_time" %></th>
@@ -63,8 +63,8 @@
     <% @bookings_list.each do |booking| %>
       <tr>
         <td>
-          <span class="color-swatch" style="background-color: <%= booking.team_color %>"></span>
-          <%= booking.team_abbreviation.presence || booking.team_name %>
+          <span class="color-swatch" style="background-color: <%= booking.club_color %>"></span>
+          <%= booking.club_abbreviation.presence || booking.club_name %>
         </td>
         <td><%= booking.date.strftime("%b %-d, %Y") %></td>
         <td><%= booking.start_time.strftime("%l:%M %p").strip %></td>
@@ -98,13 +98,13 @@
 <%= render "shared/pagination", current_page: @current_page, total_pages: @total_pages %>
 
 <script>
-  function toggleTeamFilterMenu() {
-    var menu = document.getElementById("team-filter-menu");
+  function toggleClubFilterMenu() {
+    var menu = document.getElementById("club-filter-menu");
     menu.style.display = menu.style.display === "none" ? "block" : "none";
   }
 
   function submitWithFilterOpen() {
-    var form = document.getElementById("team-filter-form");
+    var form = document.getElementById("club-filter-form");
     var input = document.createElement("input");
     input.type = "hidden";
     input.name = "filter_open";
@@ -113,28 +113,28 @@
     form.submit();
   }
 
-  function selectAllTeams() {
-    document.querySelectorAll("#team-filter-form input[type='checkbox']").forEach(function(cb) {
+  function selectAllClubs() {
+    document.querySelectorAll("#club-filter-form input[type='checkbox']").forEach(function(cb) {
       cb.checked = true;
     });
     submitWithFilterOpen();
   }
 
-  function selectNoneTeams() {
-    document.querySelectorAll("#team-filter-form input[type='checkbox']").forEach(function(cb) {
+  function selectNoneClubs() {
+    document.querySelectorAll("#club-filter-form input[type='checkbox']").forEach(function(cb) {
       cb.checked = false;
     });
     submitWithFilterOpen();
   }
 
   if (new URLSearchParams(window.location.search).get("filter_open") === "1") {
-    document.getElementById("team-filter-menu").style.display = "block";
+    document.getElementById("club-filter-menu").style.display = "block";
   }
 
   document.addEventListener("click", function(e) {
-    var dropdown = document.getElementById("team-filter-dropdown");
+    var dropdown = document.getElementById("club-filter-dropdown");
     if (dropdown && !dropdown.contains(e.target)) {
-      document.getElementById("team-filter-menu").style.display = "none";
+      document.getElementById("club-filter-menu").style.display = "none";
     }
   });
 </script>

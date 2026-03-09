@@ -1,5 +1,5 @@
 class Booking < ApplicationRecord
-  belongs_to :team
+  belongs_to :club
 
   validates :lane, presence: true, inclusion: { in: 0..11, message: "must be between 0 and 11" }
   validates :date, presence: true

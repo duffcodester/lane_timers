@@ -1,6 +1,6 @@
 <h1>Edit Booking</h1>
 
-<%= form_with model: @booking, class: "team-form" do |f| %>
+<%= form_with model: @booking, class: "club-form" do |f| %>
   <input type="hidden" name="source" value="list">
 
   <% if @booking.errors.any? %>
@@ -15,9 +15,9 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :team_id, "Team" %>
-    <%= f.select :team_id, @teams.map { |t| [t.abbreviation.presence || t.name, t.id] },
-        { prompt: "Select a team..." }, required: true %>
+    <%= f.label :club_id, "Club" %>
+    <%= f.select :club_id, @clubs.map { |c| [c.abbreviation.presence || c.name, c.id] },
+        { prompt: "Select a club..." }, required: true %>
   </div>
 
   <div class="field">

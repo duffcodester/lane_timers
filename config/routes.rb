@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get "logout", to: "sessions#destroy", as: :logout
 
 
-  resources :teams do
+  resources :clubs do
     collection do
       get :export
       post :import
@@ -26,7 +26,7 @@ Rails.application.routes.draw do
   get   "user/edit", to: "user#edit",   as: :edit_current_user
   patch "user/edit", to: "user#update", as: :update_current_user
 
-  patch "settings/teams_columns", to: "settings#update_teams_columns", as: :teams_columns_setting
+  patch "settings/clubs_columns", to: "settings#update_clubs_columns", as: :clubs_columns_setting
 
   get "tools", to: "tools#index", as: :tools
 
