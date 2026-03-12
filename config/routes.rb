@@ -20,7 +20,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :users, only: [:index, :new, :create, :destroy]
+  resources :users, only: [:index, :new, :create, :edit, :update, :destroy]
   resources :meets
 
   get   "user/edit", to: "user#edit",   as: :edit_current_user

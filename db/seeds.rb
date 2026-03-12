@@ -1,6 +1,6 @@
 # Default admin user (change password after first login)
 unless User.exists?(username: "admin")
-  User.create!(username: "admin", password: "lanetimers", password_confirmation: "lanetimers")
+  User.create!(username: "admin", password: "lanetimers", password_confirmation: "lanetimers", role: :admin)
   puts "Created default user: admin / lanetimers"
 end
 

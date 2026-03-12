@@ -2,7 +2,9 @@
 
 <div class="teams-toolbar">
   <div class="teams-toolbar-left">
-    <%= link_to "New User", new_user_path, class: "btn btn-primary" %>
+    <% if current_user.admin? %>
+      <%= link_to "New User", new_user_path, class: "btn btn-primary" %>
+    <% end %>
   </div>
 </div>
 
@@ -11,6 +13,7 @@
   <thead>
     <tr>
       <th>Username</th>
+      <th>Role</th>
       <th>Created</th>
       <th>Last Seen</th>
       <th>Actions</th>
@@ -25,6 +28,7 @@
             <span class="current-user-badge">you</span>
           <% end %>
         </td>
+        <td><%= { "admin" => "Admin / COMSA", "timer" => "Lane Timer", "manager" => "Meet Management" }[user.role] || user.role.titleize %></td>
         <td><%= user.created_at.strftime("%b %-d, %Y") %></td>
         <td>
           <% if user.last_seen_at %>
@@ -34,9 +38,12 @@
           <% end %>
         </td>
         <td class="actions-cell">
-          <% if user != current_user %>
-            <%= button_to "Delete", user_path(user), method: :delete, class: "btn btn-small btn-danger",
-                data: { turbo_confirm: "Delete user \"#{user.username}\"?" } %>
+          <% if current_user.admin? %>
+            <%= link_to "Edit", edit_user_path(user), class: "btn btn-small" %>
+            <% if user != current_user %>
+              <%= button_to "Delete", user_path(user), method: :delete, class: "btn btn-small btn-danger",
+                  data: { turbo_confirm: "Delete user \"#{user.username}\"?" } %>
+            <% end %>
           <% end %>
         </td>
       </tr>

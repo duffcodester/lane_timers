@@ -1,4 +1,5 @@
 class MeetSessionsController < ApplicationController
+  before_action :require_admin
   before_action :set_meet_session, only: [:edit, :update, :destroy, :duplicate]
   before_action :set_meets, only: [:new, :create, :edit, :update]
 

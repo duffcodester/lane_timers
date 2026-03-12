@@ -1,4 +1,5 @@
 class MeetsController < ApplicationController
+  before_action :require_admin
   before_action :set_meet, only: [:show, :edit, :update, :destroy]
 
   def index
