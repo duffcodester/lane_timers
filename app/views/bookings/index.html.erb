@@ -55,7 +55,7 @@
           <th class="time-col" rowspan="2">Time</th>
           <% @lanes.each do |lane| %>
             <% if [0, 11].include?(lane) %>
-              <th class="lane-col" rowspan="2">Lane <%= lane %></th>
+              <th class="lane-col lane-col-single" rowspan="2">Lane <%= lane %></th>
             <% else %>
               <th class="lane-col" colspan="2">Lane <%= lane %></th>
             <% end %>
