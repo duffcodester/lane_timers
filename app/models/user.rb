@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_secure_password
+  belongs_to :club, optional: true
 
   enum :role, { admin: "admin", timer: "timer", official: "official", manager: "manager", coach: "coach" }
 

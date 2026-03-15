@@ -1,0 +1,66 @@
+<% content_for :title, "Sign Up – Sage Timer" %>
+
+<div class="login-container">
+  <h1 class="login-title">Create Account</h1>
+
+  <div class="team-form">
+    <%= form_with model: @user, url: signup_path do |f| %>
+      <% if @user.errors.any? %>
+        <div class="flash flash-alert">
+          <% @user.errors.full_messages.each do |msg| %>
+            <div><%= msg %></div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :name %>
+        <%= f.text_field :name, class: "form-control" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :phone, "Mobile Phone (10-digit)" %>
+        <%= f.telephone_field :phone, class: "form-control" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :club_id, "Club & Workout Group" %>
+        <%= f.select :club_id, @clubs.map { |c| [c.abbreviation.presence || c.name, c.id] }, { include_blank: "None" }, class: "form-control" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :username %>
+        <%= f.text_field :username, autocomplete: "username", class: "form-control" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password %>
+        <div class="password-wrapper">
+          <%= f.password_field :password, autocomplete: "new-password", class: "form-control" %>
+          <button type="button" class="password-toggle" onclick="togglePassword(this)" aria-label="Show password">
+            <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+        <small class="form-hint">Minimum 8 characters</small>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password_confirmation, "Confirm Password" %>
+        <div class="password-wrapper">
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control" %>
+          <button type="button" class="password-toggle" onclick="togglePassword(this)" aria-label="Show password">
+            <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <%= f.submit "Create Account", class: "btn btn-primary btn-full" %>
+    <% end %>
+
+    <p style="text-align: center; margin-top: 1rem;">
+      Already have an account? <%= link_to "Log in", login_path, style: "color: var(--primary); text-decoration: underline;" %>
+    </p>
+  </div>
+</div>

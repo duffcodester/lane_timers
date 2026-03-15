@@ -1,50 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 230" width="200" height="230">
-  <!-- Crown / button top -->
-  <rect x="93" y="8" width="14" height="18" rx="3" fill="#a0a0a0" stroke="#888" stroke-width="1.5"/>
-  <!-- Button side left -->
-  <line x1="72" y1="42" x2="62" y2="32" stroke="#a0a0a0" stroke-width="4" stroke-linecap="round"/>
-  <!-- Button side right -->
-  <line x1="128" y1="42" x2="138" y2="32" stroke="#a0a0a0" stroke-width="4" stroke-linecap="round"/>
-  <!-- Ring at top -->
-  <ellipse cx="100" cy="28" rx="12" ry="6" fill="none" stroke="#a0a0a0" stroke-width="3"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260" width="200" height="260">
+  <!-- Top button -->
+  <rect x="88" y="2" width="24" height="16" rx="4" fill="#555" stroke="#333" stroke-width="1.5"/>
+  <!-- Side button right -->
+  <rect x="182" y="80" width="14" height="20" rx="3" fill="#555" stroke="#333" stroke-width="1.5"/>
+  <!-- Side button left -->
+  <rect x="4" y="80" width="14" height="20" rx="3" fill="#555" stroke="#333" stroke-width="1.5"/>
   <!-- Outer case -->
-  <circle cx="100" cy="130" r="88" fill="#e8e0f0" stroke="#9078b0" stroke-width="4"/>
-  <!-- Inner face -->
-  <circle cx="100" cy="130" r="78" fill="#f5f0fa" stroke="#b8a8d0" stroke-width="2"/>
-  <!-- Hour markers -->
-  <g stroke="#7b5ea7" stroke-width="2.5" stroke-linecap="round">
-    <!-- 12 -->
-    <line x1="100" y1="58" x2="100" y2="68"/>
-    <!-- 3 -->
-    <line x1="172" y1="130" x2="162" y2="130"/>
-    <!-- 6 -->
-    <line x1="100" y1="202" x2="100" y2="192"/>
-    <!-- 9 -->
-    <line x1="28" y1="130" x2="38" y2="130"/>
-  </g>
-  <!-- Minor tick marks -->
-  <g stroke="#b8a8d0" stroke-width="1.5" stroke-linecap="round">
-    <!-- 1 -->
-    <line x1="136" y1="63" x2="132" y2="71"/>
-    <!-- 2 -->
-    <line x1="163" y1="94" x2="156" y2="98"/>
-    <!-- 4 -->
-    <line x1="163" y1="166" x2="156" y2="162"/>
-    <!-- 5 -->
-    <line x1="136" y1="197" x2="132" y2="189"/>
-    <!-- 7 -->
-    <line x1="64" y1="197" x2="68" y2="189"/>
-    <!-- 8 -->
-    <line x1="37" y1="166" x2="44" y2="162"/>
-    <!-- 10 -->
-    <line x1="37" y1="94" x2="44" y2="98"/>
-    <!-- 11 -->
-    <line x1="64" y1="63" x2="68" y2="71"/>
-  </g>
-  <!-- Minute hand -->
-  <line x1="100" y1="130" x2="100" y2="68" stroke="#7b5ea7" stroke-width="3" stroke-linecap="round"/>
-  <!-- Second hand -->
-  <line x1="100" y1="130" x2="140" y2="90" stroke="#c05050" stroke-width="1.5" stroke-linecap="round"/>
-  <!-- Center dot -->
-  <circle cx="100" cy="130" r="4" fill="#7b5ea7"/>
+  <rect x="16" y="24" width="168" height="220" rx="28" fill="#2a2a2a" stroke="#444" stroke-width="3"/>
+  <!-- Inner bezel -->
+  <rect x="26" y="34" width="148" height="200" rx="20" fill="#1a1a1a" stroke="#555" stroke-width="1.5"/>
+  <!-- Screen background -->
+  <rect x="36" y="50" width="128" height="168" rx="8" fill="#0a2a0a"/>
+  <!-- Screen inner glow -->
+  <rect x="40" y="54" width="120" height="160" rx="6" fill="#0d350d"/>
+
+  <!-- Digital time display -->
+  <text x="100" y="120" text-anchor="middle" font-family="'Courier New', monospace" font-size="42" font-weight="bold" fill="#39ff14" letter-spacing="2">00:00</text>
+  <!-- Milliseconds -->
+  <text x="100" y="148" text-anchor="middle" font-family="'Courier New', monospace" font-size="24" fill="#2abf0f" letter-spacing="1">.00</text>
+
+  <!-- Top label -->
+  <text x="100" y="76" text-anchor="middle" font-family="'Courier New', monospace" font-size="11" fill="#1a8a1a" letter-spacing="3">SAGE TIMER</text>
+
+  <!-- Lap / Split indicators -->
+  <text x="56" y="178" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#1a8a1a">LAP</text>
+  <text x="100" y="178" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#39ff14">SPLIT</text>
+  <text x="144" y="178" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#1a8a1a">TOTAL</text>
+
+  <!-- Lap time display -->
+  <text x="100" y="200" text-anchor="middle" font-family="'Courier New', monospace" font-size="16" fill="#2abf0f">00:00.00</text>
+
+  <!-- Brand text at bottom -->
+  <text x="100" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#666" letter-spacing="2">SPORTS CHRONOGRAPH</text>
 </svg>

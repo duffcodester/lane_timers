@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_12_034045) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_15_015904) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,7 +39,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_034045) do
     t.string "color"
     t.datetime "created_at", null: false
     t.string "email"
-    t.decimal "misc_expense", precision: 10, scale: 2, default: "0.0"
     t.string "name", null: false
     t.string "phone"
     t.datetime "updated_at", null: false
@@ -76,15 +75,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_034045) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.bigint "club_id"
     t.datetime "created_at", null: false
     t.datetime "last_seen_at"
+    t.string "name"
     t.string "password_digest", null: false
+    t.string "phone"
     t.string "role", default: "admin", null: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
+    t.index ["club_id"], name: "index_users_on_club_id"
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
   add_foreign_key "bookings", "clubs"
   add_foreign_key "meet_sessions", "meets"
+  add_foreign_key "users", "clubs"
 end

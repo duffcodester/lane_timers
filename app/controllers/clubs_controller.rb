@@ -9,8 +9,7 @@ class ClubsController < ApplicationController
     "phone" => "clubs.phone",
     "email" => "clubs.email",
     "hours" => "total_hours",
-    "booked" => "booked_hours",
-    "misc_expense" => "clubs.misc_expense"
+    "booked" => "booked_hours"
   }.freeze
 
   PER_PAGE = 12
@@ -61,13 +60,11 @@ class ClubsController < ApplicationController
       header_style = sheet.styles.add_style(b: true, bg_color: "2C3E50", fg_color: "FFFFFF")
       currency_style = sheet.styles.add_style(num_fmt: 7)
       formula_style = sheet.styles.add_style(num_fmt: 7, b: true)
-      sheet.add_row ["Name", "Abbreviation", "Coach", "Address", "Phone", "Email", "Hours", "Amount", "Misc Expenses", "Total"], style: header_style
+      sheet.add_row ["Name", "Abbreviation", "Coach", "Address", "Phone", "Email", "Hours", "Amount"], style: header_style
       clubs.each_with_index do |club, i|
-        row = i + 2
         hours = club.total_hours.to_f
-        sheet.add_row [club.name, club.abbreviation, club.coach, club.address, club.phone, club.email, "%.2f" % hours, hours * 12, club.misc_expense.to_f, "=H#{row}+I#{row}"],
-          style: [nil, nil, nil, nil, nil, nil, nil, currency_style, currency_style, formula_style],
-          escape_formulas: false
+        sheet.add_row [club.name, club.abbreviation, club.coach, club.address, club.phone, club.email, "%.2f" % hours, hours * 12],
+          style: [nil, nil, nil, nil, nil, nil, nil, currency_style]
       end
     end
 
@@ -118,8 +115,7 @@ class ClubsController < ApplicationController
         coach: (row["coach"] || row["coach name(s)"] || row["coach names"]).presence,
         address: row["address"].presence,
         phone: row["phone"].presence,
-        email: row["email"].presence,
-        misc_expense: (row["misc_expense"] || row["misc expense"]).presence
+        email: row["email"].presence
       }.compact
 
       club = Club.find_by(name: name)
@@ -181,6 +177,6 @@ class ClubsController < ApplicationController
   end
 
   def club_params
-    params.require(:club).permit(:name, :abbreviation, :color, :coach, :address, :phone, :email, :misc_expense)
+    params.require(:club).permit(:name, :abbreviation, :color, :coach, :address, :phone, :email)
   end
 end

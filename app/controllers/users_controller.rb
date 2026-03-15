@@ -7,6 +7,7 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
+    @clubs = Club.order(:name)
   end
 
   def create
@@ -14,12 +15,14 @@ class UsersController < ApplicationController
     if @user.save
       redirect_to users_path, notice: "User \"#{@user.username}\" created."
     else
+      @clubs = Club.order(:name)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
     @user = User.find(params[:id])
+    @clubs = Club.order(:name)
   end
 
   def update
@@ -27,6 +30,7 @@ class UsersController < ApplicationController
     if @user.update(user_params)
       redirect_to users_path, notice: "User \"#{@user.username}\" updated."
     else
+      @clubs = Club.order(:name)
       render :edit, status: :unprocessable_entity
     end
   end
@@ -44,6 +48,6 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:username, :password, :password_confirmation, :role)
+    params.require(:user).permit(:username, :password, :password_confirmation, :role, :name, :phone, :club_id)
   end
 end

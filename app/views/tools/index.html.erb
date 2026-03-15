@@ -5,10 +5,20 @@
 <div class="tools-page">
 
   <section class="tools-section">
-    <h2>Info</h2>
+    <h2>Meet Information</h2>
     <div class="tools-content">
       <p>Welcome to the Sage Timer tools page. Add information, links, FAQs, and downloadable files here.</p>
+      <ul class="tools-list">
+        <li><a href="/tools/2026%20COMSA%20SCY%20State%20Meet%20Championships%202026.3.14.pdf" target="_blank">2026 COMSA SCY State Meet Championships</a></li>
+      </ul>
     </div>
+  </section>
+
+  <section class="tools-section">
+    <h2>Forecast</h2>
+    <ul class="tools-list">
+      <li><a href="/tools/ForeCast%20Clubs%20%26%20WorkOut%20Groups%202026%20COMSA%20SCY%202026.3.14%20455pm%20copy.numbers" target="_blank">ForeCast Clubs & WorkOut Groups 2026 COMSA SCY</a></li>
+    </ul>
   </section>
 
   <section class="tools-section">
@@ -23,24 +33,21 @@
   <section class="tools-section">
     <h2>FAQs</h2>
     <div class="tools-faqs">
-      <%# Add FAQ items here %>
-      <p><em>No FAQs added yet.</em></p>
+      <ul class="tools-list">
+        <li><a href="/tools/FAQ00%20Lane%20Timer%20SageTimer%20APP%20Creation%202026.3.10.pdf" target="_blank">FAQ00 Lane Timer SageTimer APP Creation</a></li>
+        <li><a href="/tools/FAQ01%20Lane%20Timer%20Goodwill%202026.3.10.pdf" target="_blank">FAQ01 Lane Timer Goodwill</a></li>
+        <li><a href="/tools/FAQ02%20Lane%20Timer%20Purpose%202026.3.10.pdf" target="_blank">FAQ02 Lane Timer Purpose</a></li>
+        <li><a href="/tools/FAQ03%20Lane%20Timer%20SageTimer%20APP%20Protocols%202026.3.10.pdf" target="_blank">FAQ03 Lane Timer SageTimer APP Protocols</a></li>
+      </ul>
     </div>
   </section>
 
   <section class="tools-section">
-    <h2>Files</h2>
-    <% if @files.any? %>
-      <ul class="tools-list tools-files">
-        <% @files.each do |filename| %>
-          <li>
-            <%= link_to filename, "/tools/#{filename}" %>
-          </li>
-        <% end %>
-      </ul>
-    <% else %>
-      <p><em>No files available. Place files in <code>public/tools/</code> to make them available here.</em></p>
-    <% end %>
+    <h2>Rule Books</h2>
+    <ul class="tools-list">
+      <li><a href="/tools/Rule%20Book%20USA%20Swimming%202026.pdf" target="_blank">Rule Book USA Swimming 2026</a></li>
+      <li><a href="/tools/Rule%20Book%20USMS%20(Compiled)%202026.pdf" target="_blank">Rule Book USMS (Compiled) 2026</a></li>
+    </ul>
   </section>
 
 </div>

@@ -29,6 +29,9 @@ Rails.application.routes.draw do
   patch "settings/clubs_columns", to: "settings#update_clubs_columns", as: :clubs_columns_setting
 
   get "tools", to: "tools#index", as: :tools
+  get "readme", to: "pages#readme", as: :readme
+  get  "signup", to: "registrations#new",    as: :signup
+  post "signup", to: "registrations#create"
 
   root "bookings#index"
 

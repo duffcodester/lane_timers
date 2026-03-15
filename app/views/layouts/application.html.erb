@@ -31,7 +31,7 @@
         <div class="nav-links" data-action="click->nav#close">
           <%= link_to "Tools", tools_path %>
           <%= link_to "Clubs & Workout Groups", clubs_path %>
-          <%= link_to "Coaches & Lane Timers", clubs_path %>
+          <%= link_to "Coaches", clubs_path %>
           <%= link_to "Meet Dashboards", root_path %>
           <%= link_to "Bookings", list_bookings_path %>
           <% if current_user&.admin? %>
@@ -43,7 +43,7 @@
           <% end %>
           <% if logged_in? %>
             <span class="nav-separator"></span>
-            <%= link_to current_user.username, edit_current_user_path, class: "nav-user" %>
+            <%= link_to "Current User: #{current_user.username}", edit_current_user_path, class: "nav-user" %>
             <%= link_to "Log Out", logout_path, class: "nav-logout" %>
           <% end %>
         </div>

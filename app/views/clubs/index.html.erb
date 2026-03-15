@@ -1,6 +1,6 @@
 <h1>Clubs (<%= @total_count %>)</h1>
 
-<% all_columns = %w[name abbreviation coach hours booked address phone email misc_expense bookable actions] %>
+<% all_columns = %w[name abbreviation coach hours booked address phone email bookable actions] %>
 
 <div class="teams-toolbar">
   <div class="teams-toolbar-left">
@@ -15,7 +15,7 @@
       <div id="columns-menu" class="columns-menu" style="display:none">
         <% { "name" => "Name", "abbreviation" => "Abbr", "coach" => "Coach", "hours" => "Forecast", "booked" => "Booked",
              "address" => "Address", "phone" => "Phone", "email" => "Email",
-             "misc_expense" => "Misc Expense", "bookable" => "Bookable", "actions" => "Actions" }.each do |col, label| %>
+             "bookable" => "Bookable", "actions" => "Actions" }.each do |col, label| %>
           <% visible = @column_prefs.empty? || @column_prefs[col] != false %>
           <label><input type="checkbox" data-col="<%= col %>" <%= "checked" if visible %> onchange="toggleColumn('<%= col %>')"> <%= label %></label>
         <% end %>
@@ -44,7 +44,6 @@
       <th data-col="address" <%= 'style="display:none"'.html_safe if hidden.include?("address") %>><%= sort_link "Address", "address" %></th>
       <th data-col="phone" <%= 'style="display:none"'.html_safe if hidden.include?("phone") %>><%= sort_link "Phone", "phone" %></th>
       <th data-col="email" <%= 'style="display:none"'.html_safe if hidden.include?("email") %>><%= sort_link "Email", "email" %></th>
-      <th data-col="misc_expense" <%= 'style="display:none"'.html_safe if hidden.include?("misc_expense") %>><%= sort_link "Misc Expense", "misc_expense" %></th>
       <th data-col="bookable" <%= 'style="display:none"'.html_safe if hidden.include?("bookable") %>>Bookable</th>
       <th data-col="actions" <%= 'style="display:none"'.html_safe if hidden.include?("actions") %>>Actions</th>
     </tr>
@@ -63,7 +62,6 @@
         <td data-col="address" <%= 'style="display:none"'.html_safe if hidden.include?("address") %>><%= club.address %></td>
         <td data-col="phone" <%= 'style="display:none"'.html_safe if hidden.include?("phone") %>><%= club.phone %></td>
         <td data-col="email" <%= 'style="display:none"'.html_safe if hidden.include?("email") %>><%= club.email %></td>
-        <td data-col="misc_expense" <%= 'style="display:none"'.html_safe if hidden.include?("misc_expense") %>><%= number_to_currency(club.misc_expense) %></td>
         <td data-col="bookable" <%= 'style="display:none"'.html_safe if hidden.include?("bookable") %>><%= club.bookable? ? "\u2705" : "" %></td>
         <td data-col="actions" class="actions-cell" <%= 'style="display:none"'.html_safe if hidden.include?("actions") %>>
           <%= link_to "Edit", edit_club_path(club), class: "btn btn-small" %>

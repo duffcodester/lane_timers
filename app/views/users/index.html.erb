@@ -12,7 +12,10 @@
 <table class="teams-table">
   <thead>
     <tr>
+      <th>Name</th>
+      <th>Phone</th>
       <th>Username</th>
+      <th>Club</th>
       <th>Role</th>
       <th>Created</th>
       <th>Last Seen</th>
@@ -22,12 +25,15 @@
   <tbody>
     <% @users.each do |user| %>
       <tr>
+        <td><%= user.name %></td>
+        <td><%= user.phone %></td>
         <td>
           <%= user.username %>
           <% if user == current_user %>
             <span class="current-user-badge">you</span>
           <% end %>
         </td>
+        <td><%= user.club&.abbreviation.presence || user.club&.name %></td>
         <td><%= { "admin" => "Admin / COMSA", "timer" => "Lane Timer", "manager" => "Meet Management" }[user.role] || user.role.titleize %></td>
         <td><%= user.created_at.strftime("%b %-d, %Y") %></td>
         <td>

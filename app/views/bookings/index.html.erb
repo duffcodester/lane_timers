@@ -175,7 +175,7 @@
         <div class="field">
           <%= f.label :club_id, "Club" %>
           <%= f.select :club_id, @clubs.map { |c| [c.abbreviation.presence || c.name, c.id] },
-              { prompt: "Select a club..." }, { name: "booking[club_id]", required: true } %>
+              { prompt: "Select a club..." }, { name: "booking[club_id]", id: "booking-club-id", required: true } %>
         </div>
 
         <div class="field">
@@ -194,12 +194,12 @@
 
         <div class="field">
           <label for="booking-name">Name</label>
-          <input type="text" name="booking[name]" id="booking-name">
+          <input type="text" name="booking[name]" id="booking-name" value="<%= current_user.name if current_user.timer? %>">
         </div>
 
         <div class="field">
           <label for="booking-phone">Mobile Phone (10-digit)</label>
-          <input type="tel" name="booking[phone]" id="booking-phone">
+          <input type="tel" name="booking[phone]" id="booking-phone" value="<%= current_user.phone if current_user.timer? %>">
         </div>
 
         <div class="field">
@@ -283,8 +283,9 @@
     document.getElementById("booking-start-time").value =
       hour.padStart(2, '0') + ":" + min.padStart(2, '0');
     document.getElementById("booking-duration").value = "60";
-    document.getElementById("booking-name").value = "";
-    document.getElementById("booking-phone").value = "";
+    document.getElementById("booking-club-id").value = "<%= current_user.timer? && current_user.club_id ? current_user.club_id : '' %>";
+    document.getElementById("booking-name").value = "<%= j(current_user.timer? ? current_user.name.to_s : '') %>";
+    document.getElementById("booking-phone").value = "<%= j(current_user.timer? ? current_user.phone.to_s : '') %>";
     document.getElementById("booking-notes").value = "";
     document.getElementById("booking-community-service").checked = false;
     updateEndTime();
