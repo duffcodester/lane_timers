@@ -374,14 +374,16 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   margin-bottom: 1rem;
 }
 .field-checkbox label {
-  display: inline;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   font-weight: 600;
   font-size: 0.875rem;
   margin-bottom: 0;
 }
 .field-checkbox input[type="checkbox"] {
-  margin-right: 0.4rem;
-  vertical-align: middle;
+  margin: 0;
+  width: auto;
 }
 .field label {
   display: block;

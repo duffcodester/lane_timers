@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_17_032405) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_17_035955) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -19,6 +19,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_032405) do
     t.boolean "community_service", default: false, null: false
     t.datetime "created_at", null: false
     t.date "date", null: false
+    t.boolean "donation", default: false
     t.time "end_time", null: false
     t.integer "lane", null: false
     t.string "name"

@@ -101,6 +101,7 @@
                       data-booking-end-time="<%= booking.end_time.strftime('%H:%M') %>"
                       data-booking-notes="<%= booking.notes %>"
                       data-booking-community-service="<%= booking.community_service %>"
+                      data-booking-donation="<%= booking.donation %>"
                       data-action="dragstart->drag#dragstart dragend->drag#dragend"
                       onclick="openEditForm(event, this)"
                       style="background-color: <%= booking.club.color %>20; border-left: 4px solid <%= booking.club.color %>">
@@ -212,6 +213,11 @@
           <label><input type="checkbox" name="booking[community_service]" id="booking-community-service" value="1"> Community Service</label>
         </div>
 
+        <div class="field field-checkbox">
+          <input type="hidden" name="booking[donation]" value="0">
+          <label><input type="checkbox" name="booking[donation]" id="booking-donation" value="1"> Donate My Financial Reward</label>
+        </div>
+
         <div class="actions">
           <%= f.submit "Claim", class: "btn btn-primary" %>
           <button type="button" class="btn" onclick="closeBookingForm()">Cancel</button>
@@ -257,6 +263,11 @@
           <label><input type="checkbox" name="booking[community_service]" id="edit-community-service" value="1"> Community Service</label>
         </div>
 
+        <div class="field field-checkbox">
+          <input type="hidden" name="booking[donation]" value="0">
+          <label><input type="checkbox" name="booking[donation]" id="edit-donation" value="1"> Donate My Financial Reward</label>
+        </div>
+
         <div class="actions">
           <button type="submit" class="btn btn-primary">Save</button>
           <button type="button" class="btn" onclick="closeEditForm()">Cancel</button>
@@ -288,6 +299,7 @@
     document.getElementById("booking-phone").value = "<%= j(current_user.timer? ? current_user.phone.to_s : '') %>";
     document.getElementById("booking-notes").value = "";
     document.getElementById("booking-community-service").checked = false;
+    document.getElementById("booking-donation").checked = false;
     updateEndTime();
     var laneLabel = subLane ? "Lane " + lane + subLane : "Lane " + lane;
     document.getElementById("booking-info").textContent =
@@ -331,6 +343,7 @@
     var endTime = cell.dataset.bookingEndTime || "";
     var notes = cell.dataset.bookingNotes || "";
     var communityService = cell.dataset.bookingCommunityService === "true";
+    var donation = cell.dataset.bookingDonation === "true";
 
     document.getElementById("edit-form").action = "/bookings/" + bookingId;
     document.getElementById("edit-start-time").value = startTime;
@@ -339,6 +352,7 @@
     document.getElementById("edit-end-time").value = endTime;
     document.getElementById("edit-notes").value = notes;
     document.getElementById("edit-community-service").checked = communityService;
+    document.getElementById("edit-donation").checked = donation;
     document.getElementById("edit-modal").style.display = "flex";
   }
 
