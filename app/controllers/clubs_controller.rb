@@ -115,7 +115,8 @@ class ClubsController < ApplicationController
         coach: (row["coach"] || row["coach name(s)"] || row["coach names"]).presence,
         address: row["address"].presence,
         phone: row["phone"].presence,
-        email: row["email"].presence
+        email: row["email"].presence,
+        priority: row["priority"].presence&.to_i || 0
       }.compact
 
       club = Club.find_by(name: name)
@@ -177,6 +178,6 @@ class ClubsController < ApplicationController
   end
 
   def club_params
-    params.require(:club).permit(:name, :abbreviation, :color, :coach, :address, :phone, :email)
+    params.require(:club).permit(:name, :abbreviation, :color, :coach, :address, :phone, :email, :priority)
   end
 end

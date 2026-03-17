@@ -1,9 +1,10 @@
 class UserController < ApplicationController
   def edit
+    @clubs = Club.order(:priority, :name)
   end
 
   def update
-    attrs = { username: params[:username] }
+    attrs = { username: params[:username], name: params[:name], phone: params[:phone], club_id: params[:club_id].presence }
 
     if params[:password].present?
       if params[:password] != params[:password_confirmation]

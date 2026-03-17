@@ -30,7 +30,7 @@ class BookingsController < ApplicationController
       )
     end
 
-    @clubs = Club.order(:name)
+    @clubs = Club.order(:priority, :name)
 
     # filter_active distinguishes "no filter applied" from "no clubs selected"
     if params[:filter_active].present?
@@ -64,7 +64,7 @@ class BookingsController < ApplicationController
     @min_date = MeetSession.minimum(:date)
     @max_date = MeetSession.maximum(:date)
     @date = params[:date] ? Date.parse(params[:date]) : (@min_date || Date.today)
-    @clubs = Club.where(bookable: true).order(:abbreviation)
+    @clubs = Club.where(bookable: true).order(:priority, :name)
     @sessions = MeetSession.where(date: @date).order(:start_time)
 
     if @sessions.any?
@@ -118,7 +118,7 @@ class BookingsController < ApplicationController
 
   def edit
     @booking = Booking.find(params[:id])
-    @clubs = Club.where(bookable: true).order(:abbreviation)
+    @clubs = Club.where(bookable: true).order(:priority, :name)
   end
 
   def create
@@ -167,7 +167,7 @@ class BookingsController < ApplicationController
       if @booking.update(booking_edit_params)
         redirect_to list_bookings_path, notice: "Booking updated."
       else
-        @clubs = Club.where(bookable: true).order(:abbreviation)
+        @clubs = Club.where(bookable: true).order(:priority, :name)
         render :edit, status: :unprocessable_entity
       end
     else

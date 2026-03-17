@@ -9,8 +9,23 @@
     <% end %>
 
     <div class="field">
+      <%= label_tag :name, "Name" %>
+      <%= text_field_tag :name, params[:name] || current_user.name, class: "form-control", autofocus: true %>
+    </div>
+
+    <div class="field">
+      <%= label_tag :phone, "Phone" %>
+      <%= phone_field_tag :phone, params[:phone] || current_user.phone, class: "form-control" %>
+    </div>
+
+    <div class="field">
+      <%= label_tag :club_id, "Club & Workout Group" %>
+      <%= select_tag :club_id, options_from_collection_for_select(@clubs, :id, :name, current_user.club_id), include_blank: "— None —", class: "form-control" %>
+    </div>
+
+    <div class="field">
       <%= label_tag :username, "Username" %>
-      <%= text_field_tag :username, params[:username] || current_user.username, autocomplete: "username", class: "form-control", autofocus: true %>
+      <%= text_field_tag :username, params[:username] || current_user.username, autocomplete: "username", class: "form-control" %>
       <span class="form-hint">Letters, numbers, and underscores only</span>
     </div>
 

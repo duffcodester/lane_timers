@@ -41,6 +41,11 @@
   </div>
 
   <div class="field">
+    <%= f.label :priority, "Priority (lower = first)" %>
+    <%= f.number_field :priority, value: club.priority || 0 %>
+  </div>
+
+  <div class="field">
     <%= f.label :color %>
     <%= f.color_field :color, value: club.color || "#3498db" %>
   </div>
