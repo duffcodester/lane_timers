@@ -175,7 +175,7 @@
 
         <div class="field">
           <%= f.label :club_id, "Club" %>
-          <%= f.select :club_id, @clubs.map { |c| [c.abbreviation.presence || c.name, c.id] },
+          <%= f.select :club_id, @clubs.map { |c| ["#{c.abbreviation} - #{c.name}", c.id] },
               { prompt: "Select a club..." }, { name: "booking[club_id]", id: "booking-club-id", required: true } %>
         </div>
 
