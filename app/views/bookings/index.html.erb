@@ -88,10 +88,11 @@
             <% end %>
             <td class="time-cell"><%= format_time(hour, min) %></td>
             <% @columns.each do |col| %>
+              <% lane_start = col[:sub_lane] == "A" || col[:sub_lane].nil? %>
               <% booking = @grid[[col[:lane], col[:sub_lane], hour, min]] %>
               <% if booking %>
                 <% if booking.start_time.hour == hour && booking.start_time.min == min %>
-                  <td class="booked-cell" rowspan="<%= booking.duration_slots %>"
+                  <td class="booked-cell<%= ' lane-start' if lane_start %>" rowspan="<%= booking.duration_slots %>"
                       draggable="true"
                       data-club-id="<%= booking.club.id %>"
                       data-booking-id="<%= booking.id %>"
@@ -123,9 +124,9 @@
                 %>
               <% else %>
                 <% if @closed_slots.include?([hour, min]) %>
-                  <td class="disabled-cell"></td>
+                  <td class="disabled-cell<%= ' lane-start' if lane_start %>"></td>
                 <% else %>
-                  <td class="empty-cell"
+                  <td class="empty-cell<%= ' lane-start' if lane_start %>"
                       data-lane="<%= col[:lane] %>" data-sub-lane="<%= col[:sub_lane] %>" data-hour="<%= hour %>" data-min="<%= min %>"
                       data-action="dragover->drag#dragover dragenter->drag#dragenter dragleave->drag#dragleave drop->drag#drop"
                       onclick="openBookingForm(this)">

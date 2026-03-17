@@ -167,6 +167,13 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
   text-align: center;
   vertical-align: middle;
 }
+.schedule-grid td.lane-start {
+  border-left: 3px solid var(--text);
+}
+.schedule-grid th.lane-col,
+.schedule-grid th.lane-col-single {
+  border-left: 3px solid var(--text);
+}
 .time-cell {
   font-size: 0.75rem;
   color: var(--text-light);
