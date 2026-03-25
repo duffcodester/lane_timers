@@ -1,6 +1,6 @@
 <h1>Clubs (<%= @total_count %>)</h1>
 
-<% all_columns = %w[name abbreviation coach hours booked address phone email bookable actions] %>
+<% all_columns = %w[name abbreviation coach hours booked complete address phone email bookable actions] %>
 
 <div class="teams-toolbar">
   <div class="teams-toolbar-left">
@@ -14,7 +14,7 @@
       <button type="button" class="btn" onclick="toggleColumnsMenu()">Columns</button>
       <div id="columns-menu" class="columns-menu" style="display:none">
         <% { "name" => "Name", "abbreviation" => "Abbr", "coach" => "Coach", "hours" => "Forecast", "booked" => "Booked",
-             "address" => "Address", "phone" => "Phone", "email" => "Email",
+             "complete" => "Complete", "address" => "Address", "phone" => "Phone", "email" => "Email",
              "bookable" => "Bookable", "actions" => "Actions" }.each do |col, label| %>
           <% visible = @column_prefs.empty? || @column_prefs[col] != false %>
           <label><input type="checkbox" data-col="<%= col %>" <%= "checked" if visible %> onchange="toggleColumn('<%= col %>')"> <%= label %></label>
@@ -41,6 +41,7 @@
       <th data-col="coach" <%= 'style="display:none"'.html_safe if hidden.include?("coach") %>><%= sort_link "Coach Name(s)", "coach" %></th>
       <th data-col="hours" <%= 'style="display:none"'.html_safe if hidden.include?("hours") %>><%= sort_link "Forecast", "hours" %></th>
       <th data-col="booked" <%= 'style="display:none"'.html_safe if hidden.include?("booked") %>><%= sort_link "Booked", "booked" %></th>
+      <th data-col="complete" <%= 'style="display:none"'.html_safe if hidden.include?("complete") %>><%= sort_link "Complete", "complete" %></th>
       <th data-col="address" <%= 'style="display:none"'.html_safe if hidden.include?("address") %>><%= sort_link "Address", "address" %></th>
       <th data-col="phone" <%= 'style="display:none"'.html_safe if hidden.include?("phone") %>><%= sort_link "Phone", "phone" %></th>
       <th data-col="email" <%= 'style="display:none"'.html_safe if hidden.include?("email") %>><%= sort_link "Email", "email" %></th>
@@ -59,6 +60,7 @@
         <td data-col="coach" <%= 'style="display:none"'.html_safe if hidden.include?("coach") %>><%= club.coach %></td>
         <td data-col="hours" <%= 'style="display:none"'.html_safe if hidden.include?("hours") %>><%= "%.2f" % club.total_hours.to_f %></td>
         <td data-col="booked" <%= 'style="display:none"'.html_safe if hidden.include?("booked") %>><%= "%.2f" % club.booked_hours.to_f %></td>
+        <td data-col="complete" <%= 'style="display:none"'.html_safe if hidden.include?("complete") %>><%= "%.2f" % club.completed_hours.to_f %></td>
         <td data-col="address" <%= 'style="display:none"'.html_safe if hidden.include?("address") %>><%= club.address %></td>
         <td data-col="phone" <%= 'style="display:none"'.html_safe if hidden.include?("phone") %>><%= club.phone %></td>
         <td data-col="email" <%= 'style="display:none"'.html_safe if hidden.include?("email") %>><%= club.email %></td>

@@ -9,7 +9,8 @@ class ClubsController < ApplicationController
     "phone" => "clubs.phone",
     "email" => "clubs.email",
     "hours" => "total_hours",
-    "booked" => "booked_hours"
+    "booked" => "booked_hours",
+    "complete" => "completed_hours"
   }.freeze
 
   PER_PAGE = 12
@@ -37,7 +38,7 @@ class ClubsController < ApplicationController
     @total_pages = [(@total_count.to_f / PER_PAGE).ceil, 1].max
 
     @clubs = base.left_joins(:bookings)
-                 .select("clubs.*, COALESCE(SUM(EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0), 0) AS total_hours, COALESCE(SUM(CASE WHEN bookings.name IS NOT NULL AND bookings.name != '' THEN EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0 ELSE 0 END), 0) AS booked_hours")
+                 .select("clubs.*, COALESCE(SUM(EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0), 0) AS total_hours, COALESCE(SUM(CASE WHEN bookings.name IS NOT NULL AND bookings.name != '' THEN EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0 ELSE 0 END), 0) AS booked_hours, COALESCE(SUM(CASE WHEN (bookings.date + bookings.end_time::time) < NOW() THEN EXTRACT(EPOCH FROM (bookings.end_time - bookings.start_time)) / 3600.0 ELSE 0 END), 0) AS completed_hours")
                  .group("clubs.id")
                  .order(Arel.sql(order_sql))
                  .limit(PER_PAGE)
