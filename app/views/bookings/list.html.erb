@@ -77,10 +77,12 @@
         <td><%= booking.community_service? ? "Yes" : "" %></td>
         <td class="actions-cell">
           <%= link_to "Edit", edit_booking_path(booking), class: "btn btn-small" %>
-          <%= button_to "Delete", booking_path(booking), method: :delete,
-              params: { source: "list" },
-              class: "btn btn-small btn-danger",
-              data: { turbo_confirm: "Delete this booking?" } %>
+          <% if current_user&.admin? %>
+            <%= button_to "Delete", booking_path(booking), method: :delete,
+                params: { source: "list" },
+                class: "btn btn-small btn-danger",
+                data: { turbo_confirm: "Delete this booking?" } %>
+          <% end %>
         </td>
       </tr>
     <% end %>

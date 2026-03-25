@@ -186,6 +186,10 @@ class BookingsController < ApplicationController
   end
 
   def destroy
+    unless current_user&.admin?
+      redirect_to root_path, alert: "Only admins can delete bookings."
+      return
+    end
     @booking = Booking.find(params[:id])
     date = @booking.date
     from_list = params[:source] == "list"
@@ -271,6 +275,10 @@ class BookingsController < ApplicationController
   end
 
   def clear
+    unless current_user&.admin?
+      redirect_to root_path, alert: "Only admins can clear bookings."
+      return
+    end
     date = params[:date] ? Date.parse(params[:date]) : (MeetSession.order(:date).first&.date || Date.today)
     count = Booking.where(date: date).delete_all
     redirect_to root_path(date: date), notice: "#{count} booking(s) cleared for #{date.strftime('%B %d, %Y')}."

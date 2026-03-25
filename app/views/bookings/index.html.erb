@@ -120,8 +120,10 @@
                       <% if booking.name.present? %>
                         <span class="booking-name"><%= booking.name %></span>
                       <% end %>
-                      <%= button_to "×", booking_path(booking), method: :delete,
-                          class: "btn-remove", data: { turbo_confirm: "Remove this booking?" } %>
+                      <% if current_user&.admin? %>
+                        <%= button_to "×", booking_path(booking), method: :delete,
+                            class: "btn-remove", data: { turbo_confirm: "Remove this booking?" } %>
+                      <% end %>
                     </div>
                     <div class="resize-handle resize-handle-bottom" draggable="false"
                          data-action="mousedown->resize#startBottom"></div>
