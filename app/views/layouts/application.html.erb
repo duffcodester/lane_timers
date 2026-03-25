@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Sage Timer" %></title>
+    <title><%= content_for(:title) || "SageTimer" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Sage Timer">
+    <meta name="application-name" content="SageTimer">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -26,7 +26,7 @@
   <body>
     <nav class="top-nav" data-controller="nav" data-action="keydown@window->nav#closeOnKeydown">
       <div class="nav-content">
-        <%= link_to "Sage Timer", root_path, class: "app-title" %>
+        <%= link_to "SageTimer", root_path, class: "app-title" %>
         <button class="hamburger" data-nav-target="button" data-action="nav#toggle" aria-label="Toggle menu">&#9776;</button>
         <div class="nav-links" data-action="click->nav#close">
           <%= link_to "Tools", tools_path %>
@@ -69,5 +69,8 @@
         btn.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
       }
     </script>
+    <footer class="site-footer">
+      &copy; 2026 Affektive Software LLC
+    </footer>
   </body>
 </html>

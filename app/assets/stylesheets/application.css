@@ -1,4 +1,4 @@
-/* Sage Timer - Application Styles */
+/* SageTimer - Application Styles */
 
 :root {
   --bg: #f5f7fa;
@@ -799,6 +799,16 @@ h1 { margin-bottom: 1rem; font-size: 1.5rem; }
 .tools-files a { font-weight: 500; }
 .tools-faqs { display: flex; flex-direction: column; gap: 1rem; }
 .tools-content p, .tools-faqs p { color: var(--text); line-height: 1.6; }
+
+/* Footer */
+.site-footer {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  margin-top: 2rem;
+  color: var(--text-light);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+}
 
 /* Mobile navigation */
 @media (max-width: 768px) {
