@@ -116,7 +116,7 @@
                     <div class="resize-handle resize-handle-top" draggable="false"
                          data-action="mousedown->resize#startTop"></div>
                     <div class="booking-content">
-                      <span class="team-name"><%= booking.club.abbreviation.presence || booking.club.name %></span>
+                      <span class="team-name"><%= (booking.club.abbreviation.presence || booking.club.name).gsub("-", "-<br>").html_safe %></span>
                       <% if booking.name.present? %>
                         <span class="booking-name"><%= booking.name %></span>
                       <% end %>
