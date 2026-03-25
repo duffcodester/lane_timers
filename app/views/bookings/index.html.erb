@@ -242,6 +242,15 @@
         <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
 
         <div class="field">
+          <label for="edit-club-id">Club</label>
+          <select name="booking[club_id]" id="edit-club-id" required>
+            <% @clubs.each do |c| %>
+              <option value="<%= c.id %>"><%= "#{c.abbreviation} - #{c.name}" %></option>
+            <% end %>
+          </select>
+        </div>
+
+        <div class="field">
           <label for="edit-start-time">Start Time</label>
           <input type="time" name="booking[start_time]" id="edit-start-time" step="900">
         </div>
@@ -345,6 +354,7 @@
     if (isDragging) return;
     if (event.target.closest(".resize-handle")) return;
     var bookingId = cell.dataset.bookingId;
+    var clubId = cell.dataset.clubId || "";
     var name = cell.dataset.bookingName || "";
     var phone = cell.dataset.bookingPhone || "";
     var startTime = cell.dataset.bookingStartTime || "";
@@ -354,6 +364,7 @@
     var donation = cell.dataset.bookingDonation === "true";
 
     document.getElementById("edit-form").action = "/bookings/" + bookingId;
+    document.getElementById("edit-club-id").value = clubId;
     document.getElementById("edit-start-time").value = startTime;
     document.getElementById("edit-name").value = name;
     document.getElementById("edit-phone").value = phone;
