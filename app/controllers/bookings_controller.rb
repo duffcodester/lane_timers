@@ -158,9 +158,13 @@ class BookingsController < ApplicationController
       attrs[:end_time] = Time.zone.parse("#{date} #{bp[:end_time]}")
     end
 
-    # Edit modal sends name + phone
+    # Edit modal sends club_id, name + phone
+    attrs[:club_id] = bp[:club_id] if bp[:club_id].present?
     attrs[:name] = bp[:name] if bp.key?(:name)
     attrs[:phone] = bp[:phone] if bp.key?(:phone)
+    attrs[:notes] = bp[:notes] if bp.key?(:notes)
+    attrs[:community_service] = bp[:community_service] if bp.key?(:community_service)
+    attrs[:donation] = bp[:donation] if bp.key?(:donation)
 
     if params[:source] == "list"
       # Full update from the edit page
