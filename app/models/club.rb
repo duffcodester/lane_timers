@@ -3,7 +3,7 @@ class Club < ApplicationRecord
 
   validates :name, presence: true, uniqueness: true
   validates :color, presence: true
-  validates :abbreviation, length: { maximum: 5 }
+  validates :abbreviation, length: { maximum: 12 }
 
   before_save :set_bookable
 
