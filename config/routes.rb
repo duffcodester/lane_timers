@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   resources :bookings, only: [:create, :edit, :update, :destroy] do
     collection do
       get :list
+      post :import
     end
   end
 

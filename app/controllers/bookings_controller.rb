@@ -193,6 +193,79 @@ class BookingsController < ApplicationController
     end
   end
 
+  def import
+    file = params[:file]
+    unless file
+      redirect_to root_path, alert: "Please select a CSV file."
+      return
+    end
+
+    require "csv"
+    created = 0
+    errors = []
+    content = File.read(file.path).sub(/\A\xEF\xBB\xBF/, "")
+    rows = CSV.parse(content, headers: true)
+
+    # Build club lookup by abbreviation (case-insensitive)
+    clubs_by_abbr = Club.all.index_by { |c| c.abbreviation&.downcase }
+
+    # Identify lane columns (anything that isn't sessionName)
+    lane_columns = rows.headers.reject { |h| h&.strip&.downcase == "sessionname" || h.blank? }
+
+    rows.each_with_index do |row, i|
+      session_name = row.find { |k, _| k&.strip&.downcase == "sessionname" }&.last&.strip
+      next if session_name.blank?
+
+      session = MeetSession.find_by("LOWER(name) = ?", session_name.downcase)
+      unless session
+        errors << "Row #{i + 2}: session '#{session_name}' not found"
+        next
+      end
+
+      lane_columns.each do |col_header|
+        abbr = row[col_header]&.strip
+        next if abbr.blank?
+
+        # Parse lane column header like "10A", "10B", "11", "0"
+        match = col_header.strip.match(/\A(\d+)([AB])?\z/i)
+        unless match
+          errors << "Row #{i + 2}: invalid lane column '#{col_header}'"
+          next
+        end
+
+        lane = match[1].to_i
+        sub_lane = match[2]&.upcase
+        sub_lane = nil if [0, 11].include?(lane)
+
+        club = clubs_by_abbr[abbr.downcase]
+        unless club
+          errors << "Row #{i + 2}: club '#{abbr}' not found"
+          next
+        end
+
+        booking = Booking.new(
+          club_id: club.id,
+          lane: lane,
+          sub_lane: sub_lane,
+          date: session.date,
+          start_time: session.start_time,
+          end_time: session.end_time
+        )
+
+        if booking.save
+          created += 1
+        else
+          errors << "Row #{i + 2}, lane #{col_header}: #{booking.errors.full_messages.join(', ')}"
+        end
+      end
+    end
+
+    msg = "Imported #{created} booking(s)."
+    msg += " Errors: #{errors.first(10).join('; ')}." if errors.any?
+    msg += " (#{errors.size - 10} more errors)" if errors.size > 10
+    redirect_to root_path, notice: msg
+  end
+
   def clear
     date = params[:date] ? Date.parse(params[:date]) : (MeetSession.order(:date).first&.date || Date.today)
     count = Booking.where(date: date).delete_all

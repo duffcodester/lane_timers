@@ -40,6 +40,13 @@
     </div>
   <% end %>
 
+  <% if current_user&.admin? %>
+    <%= form_tag import_bookings_path, multipart: true, class: "import-form", style: "display:inline" do %>
+      <%= file_field_tag :file, accept: ".csv", onchange: "this.form.submit()" %>
+      <label for="file" class="btn btn-small">Import CSV</label>
+    <% end %>
+  <% end %>
+
 </div>
 
 <% if @sessions.blank? %>
