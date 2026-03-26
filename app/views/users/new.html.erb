@@ -55,7 +55,7 @@
 
     <div class="form-group">
       <%= f.label :role %>
-      <%= f.select :role, User.roles.keys.map { |r| [{ "admin" => "Admin", "timer" => "Lane Timer", "manager" => "Meet Management", "comsa" => "COMSA" }[r] || r.titleize, r] }, {}, class: "form-control" %>
+      <%= f.select :role, User.roles.keys.map { |r| [{ "admin" => "Admin", "timer" => "Lane Timer", "head_timer" => "Head Lane Timer", "manager" => "Meet Management", "comsa" => "COMSA" }[r] || r.titleize, r] }, {}, class: "form-control" %>
     </div>
 
     <div class="form-actions">

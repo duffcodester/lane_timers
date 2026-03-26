@@ -34,7 +34,7 @@
           <% end %>
         </td>
         <td><%= user.club&.abbreviation.presence || user.club&.name %></td>
-        <td><%= { "admin" => "Admin", "timer" => "Lane Timer", "manager" => "Meet Management", "comsa" => "COMSA" }[user.role] || user.role.titleize %></td>
+        <td><%= { "admin" => "Admin", "timer" => "Lane Timer", "head_timer" => "Head Lane Timer", "manager" => "Meet Management", "comsa" => "COMSA" }[user.role] || user.role.titleize %></td>
         <td><%= user.created_at.strftime("%b %-d, %Y") %></td>
         <td>
           <% if user.last_seen_at %>
