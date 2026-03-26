@@ -3,7 +3,7 @@ class RegistrationsController < ApplicationController
 
   def new
     @user = User.new
-    @clubs = Club.order(:name)
+    @clubs = Club.order(:priority, :name)
   end
 
   def create
@@ -13,7 +13,7 @@ class RegistrationsController < ApplicationController
       session[:user_id] = @user.id
       redirect_to root_path, notice: "Account created successfully."
     else
-      @clubs = Club.order(:name)
+      @clubs = Club.order(:priority, :name)
       render :new, status: :unprocessable_entity
     end
   end
