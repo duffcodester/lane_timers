@@ -1,4 +1,6 @@
 class BookingsController < ApplicationController
+  before_action :require_booking_access, only: [:create, :update, :edit]
+
   PER_PAGE = 12
 
   SORTABLE_COLUMNS = {
@@ -285,6 +287,13 @@ class BookingsController < ApplicationController
   end
 
   private
+
+  def require_booking_access
+    if current_user&.official? || current_user&.manager?
+      redirect_to root_path, alert: "Your role does not allow editing bookings."
+      return
+    end
+  end
 
   def booking_params
     params.require(:booking).permit(:club_id, :lane, :sub_lane, :date, :start_time, :end_time, :name, :phone, :notes, :community_service, :donation)
